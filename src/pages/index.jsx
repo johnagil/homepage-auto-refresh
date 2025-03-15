@@ -303,7 +303,7 @@ function Home({ initialSettings }) {
               className={classNames(
                 "sm:flex rounded-md bg-theme-100/20 dark:bg-white/5",
                 settings.cardBlur !== undefined &&
-                  `backdrop-blur-sm${settings.cardBlur.length ? "-" : ""}${settings.cardBlur}`,
+                  `backdrop-blur${settings.cardBlur.length ? "-" : ""}${settings.cardBlur}`,
               )}
               id="myTab"
               data-tabs-toggle="#myTabContent"
@@ -432,7 +432,7 @@ function Home({ initialSettings }) {
             headerStyles[headerStyle],
             settings.cardBlur !== undefined &&
               headerStyle === "boxed" &&
-              `backdrop-blur-sm${settings.cardBlur.length ? "-" : ""}${settings.cardBlur}`,
+              `backdrop-blur${settings.cardBlur.length ? "-" : ""}${settings.cardBlur}`,
           )}
         >
           <div id="widgets-wrap" className={classNames("flex flex-row w-full flex-wrap justify-between gap-x-2")}>
@@ -480,7 +480,7 @@ function Home({ initialSettings }) {
           </div>
 
           <div id="version" className="flex mt-4 w-full justify-end">
-            {!settings.hideVersion && <Version />}
+            {!settings.hideVersion && <Version disableUpdateCheck={settings.disableUpdateCheck} />}
           </div>
         </div>
       </div>
@@ -536,9 +536,7 @@ export default function Wrapper({ initialSettings, fallback }) {
           className={classNames(
             "fixed overflow-auto w-full h-full",
             backgroundBlur &&
-              `backdrop-blur-sm${initialSettings.background.blur.length ? "-" : ""}${
-                initialSettings.background.blur - sm
-              }`,
+              `backdrop-blur${initialSettings.background.blur.length ? "-" : ""}${initialSettings.background.blur}`,
             backgroundSaturate && `backdrop-saturate-${initialSettings.background.saturate}`,
             backgroundBrightness && `backdrop-brightness-${initialSettings.background.brightness}`,
           )}
