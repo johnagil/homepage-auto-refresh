@@ -21,7 +21,7 @@ export default function Component({ service }) {
   const { widget } = service;
   const { chart, version = 3 } = widget;
 
-  const memoryInfoKey = version === 3 ? 0 : "data";
+  const memoryInfoKey = version === 3 ? 0 : "rss";
 
   const { data, error } = useWidgetAPI(service.widget, `${version}/processlist`);
 
@@ -65,7 +65,7 @@ export default function Component({ service }) {
                 <div className="opacity-25 w-14 text-right">{item.cpu_percent.toFixed(1)}%</div>
                 <div className="opacity-25 w-14 text-right">
                   {t("common.bytes", {
-                    value: item.memory_info[memoryInfoKey] ?? item.memory_info.wset,
+                    value: item.memory_info[memoryInfoKey] ?? item.memory_info.data ?? item.memory_info.wset,
                     maximumFractionDigits: 0,
                   })}
                 </div>
