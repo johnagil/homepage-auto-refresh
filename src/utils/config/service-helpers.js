@@ -409,6 +409,9 @@ export function cleanServiceGroups(groups) {
 
           // spoolman
           spoolIds,
+
+          // grafana
+          alerts,
         } = widgetData;
 
         let fieldsList = fields;
@@ -519,7 +522,18 @@ export function cleanServiceGroups(groups) {
           if (snapshotPath) widget.snapshotPath = snapshotPath;
         }
         if (
-          ["beszel", "glances", "immich", "komga", "mealie", "pfsense", "pihole", "speedtest", "wgeasy"].includes(type)
+          [
+            "beszel",
+            "glances",
+            "immich",
+            "komga",
+            "mealie",
+            "pfsense",
+            "pihole",
+            "speedtest",
+            "wgeasy",
+            "grafana",
+          ].includes(type)
         ) {
           if (version) widget.version = parseInt(version, 10);
         }
@@ -600,6 +614,9 @@ export function cleanServiceGroups(groups) {
         }
         if (type === "jellystat") {
           if (days !== undefined) widget.days = parseInt(days, 10);
+        }
+        if (type === "grafana") {
+          if (alerts) widget.alerts = alerts;
         }
         return widget;
       });
