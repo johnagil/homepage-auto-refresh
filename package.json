@@ -1,6 +1,6 @@
 {
   "name": "homepage",
-  "version": "1.4.1",
+  "version": "1.4.5",
   "private": true,
   "scripts": {
     "preinstall": "npx only-allow pnpm",
@@ -72,6 +72,7 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
+      "osx-temperature-sensor",
       "sharp"
     ]
   }
