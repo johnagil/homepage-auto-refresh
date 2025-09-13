@@ -18,7 +18,7 @@ jobs:
     name: "Stale"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/stale@v9
+      - uses: actions/stale@v10
         with:
           days-before-stale: 7
           days-before-close: 14
@@ -57,7 +57,7 @@ jobs:
     name: "Close Answered Discussions"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@v8
         with:
           script: |
             function sleep(ms) {
@@ -113,7 +113,7 @@ jobs:
     name: "Close Outdated Discussions"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@v8
         with:
           script: |
             function sleep(ms) {
@@ -204,7 +204,7 @@ jobs:
     name: "Close Unsupported Feature Requests"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@v8
         with:
           script: |
             function sleep(ms) {
@@ -212,9 +212,9 @@ jobs:
             }
 
             const CUTOFF_1_DAYS = 180;
-            const CUTOFF_1_COUNT = 10;
+            const CUTOFF_1_COUNT = 20;
             const CUTOFF_2_DAYS = 365;
-            const CUTOFF_2_COUNT = 20;
+            const CUTOFF_2_COUNT = 40;
 
             const cutoff1Date = new Date();
             cutoff1Date.setDate(cutoff1Date.getDate() - CUTOFF_1_DAYS);
