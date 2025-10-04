@@ -417,6 +417,7 @@ function Home({ initialSettings }) {
         )}
         <meta name="msapplication-TileColor" content={themes[settings.color || "slate"][settings.theme || "dark"]} />
         <meta name="theme-color" content={themes[settings.color || "slate"][settings.theme || "dark"]} />
+        <meta name="color-scheme" content="dark light"></meta>
       </Head>
 
       <Script src="/api/config/custom.js" />
@@ -432,7 +433,7 @@ function Home({ initialSettings }) {
           searchString={searchString}
           setSearchString={setSearchString}
           isOpen={searching}
-          close={setSearching}
+          setSearching={setSearching}
         />
         <div
           id="information-widgets"
@@ -499,6 +500,7 @@ function Home({ initialSettings }) {
 
 export default function Wrapper({ initialSettings, fallback }) {
   const { theme } = useContext(ThemeContext);
+  const { color } = useContext(ColorContext);
   let backgroundImage = "";
   let opacity = initialSettings?.backgroundOpacity ?? 0;
   let backgroundBlur = false;
@@ -527,41 +529,59 @@ export default function Wrapper({ initialSettings, fallback }) {
     html.classList.toggle("dark", theme === "dark");
     html.classList.add(theme === "dark" ? "scheme-dark" : "scheme-light");
 
-    html.classList.remove(...Array.from(html.classList).filter((cls) => cls.startsWith("theme-")));
-    html.classList.add(`theme-${initialSettings.color || "slate"}`);
+    const desiredThemeClass = `theme-${color || initialSettings.color || "slate"}`;
+    const themeClassesToRemove = Array.from(html.classList).filter(
+      (cls) => cls.startsWith("theme-") && cls !== desiredThemeClass,
+    );
+    if (themeClassesToRemove.length) {
+      html.classList.remove(...themeClassesToRemove);
+    }
+    if (!html.classList.contains(desiredThemeClass)) {
+      html.classList.add(desiredThemeClass);
+    }
 
-    // Remove any previously applied inline styles
-    body.style.backgroundImage = "";
-    body.style.backgroundColor = "";
-    body.style.backgroundAttachment = "";
-  }, [backgroundImage, opacity, theme, initialSettings.color]);
+    if (backgroundImage) {
+      const safeBackgroundImage = backgroundImage.replace(/'/g, "\\'");
+      body.style.backgroundImage = `linear-gradient(rgb(var(--bg-color) / ${opacity}), rgb(var(--bg-color) / ${opacity})), url('${safeBackgroundImage}')`;
+      body.style.backgroundSize = "cover";
+      body.style.backgroundPosition = "center";
+      body.style.backgroundAttachment = "fixed";
+      body.style.backgroundRepeat = "no-repeat";
+      body.style.backgroundColor = "";
+    } else {
+      body.style.backgroundImage = "none";
+      body.style.backgroundColor = "rgb(var(--bg-color))";
+      body.style.backgroundSize = "";
+      body.style.backgroundPosition = "";
+      body.style.backgroundAttachment = "";
+      body.style.backgroundRepeat = "";
+    }
+
+    return () => {
+      body.style.backgroundImage = "";
+      body.style.backgroundColor = "";
+      body.style.backgroundSize = "";
+      body.style.backgroundPosition = "";
+      body.style.backgroundAttachment = "";
+      body.style.backgroundRepeat = "";
+    };
+  }, [backgroundImage, opacity, theme, color, initialSettings.color]);
 
   return (
-    <>
-      {backgroundImage && (
-        <div
-          id="background"
-          aria-hidden="true"
-          style={{
-            backgroundImage: `linear-gradient(rgb(var(--bg-color) / ${opacity}), rgb(var(--bg-color) / ${opacity})), url('${backgroundImage}')`,
-          }}
-        />
-      )}
-      <div id="page_wrapper" className="relative h-full">
-        <div
-          id="inner_wrapper"
-          tabIndex="-1"
-          className={classNames(
-            "w-full h-full overflow-auto",
-            backgroundBlur &&
-              `backdrop-blur${initialSettings.background.blur?.length ? `-${initialSettings.background.blur}` : ""}`,
-            backgroundSaturate && `backdrop-saturate-${initialSettings.background.saturate}`,
-            backgroundBrightness && `backdrop-brightness-${initialSettings.background.brightness}`,
-          )}
-        >
-          <Index initialSettings={initialSettings} fallback={fallback} />
-        </div>
+    <div id="page_wrapper" className="relative min-h-screen">
+      <div
+        id="inner_wrapper"
+        tabIndex="-1"
+        className={classNames(
+          "w-full min-h-screen overflow-auto",
+          backgroundBlur &&
+            `backdrop-blur${initialSettings.background.blur?.length ? `-${initialSettings.background.blur}` : ""}`,
+          backgroundSaturate && `backdrop-saturate-${initialSettings.background.saturate}`,
+          backgroundBrightness && `backdrop-brightness-${initialSettings.background.brightness}`,
+        )}
+      >
+        <Index initialSettings={initialSettings} fallback={fallback} />
       </div>
-    </>
+    </div>
   );
 }
