@@ -41,6 +41,17 @@ const Version = dynamic(() => import("components/version"), {
 
 const rightAlignedWidgets = ["weatherapi", "openweathermap", "weather", "openmeteo", "search", "datetime"];
 
+// Normalize language codes so older config values like zh-CN still point to Crowdin-provided ones
+const LANGUAGE_ALIASES = {
+  "zh-cn": "zh-Hans",
+};
+
+const normalizeLanguage = (language) => {
+  if (!language) return "en";
+  const alias = LANGUAGE_ALIASES[language.toLowerCase()];
+  return alias || language;
+};
+
 export async function getStaticProps() {
   let logger;
   try {
@@ -50,6 +61,7 @@ export async function getStaticProps() {
     const services = await servicesResponse();
     const bookmarks = await bookmarksResponse();
     const widgets = await widgetsResponse();
+    const language = normalizeLanguage(settings.language);
 
     return {
       props: {
@@ -60,7 +72,7 @@ export async function getStaticProps() {
           "/api/widgets": widgets,
           "/api/hash": false,
         },
-        ...(await serverSideTranslations(settings.language ?? "en")),
+        ...(await serverSideTranslations(language)),
       },
     };
   } catch (e) {
@@ -218,8 +230,9 @@ function Home({ initialSettings }) {
   );
 
   useEffect(() => {
-    if (settings.language) {
-      i18n.changeLanguage(settings.language);
+    const language = normalizeLanguage(settings.language);
+    if (language) {
+      i18n.changeLanguage(language);
     }
 
     if (settings.theme && theme !== settings.theme) {
@@ -400,6 +413,7 @@ function Home({ initialSettings }) {
             "A highly customizable homepage (or startpage / application dashboard) with Docker and service API integrations."
           }
         />
+        {settings.disableIndexing && <meta name="robots" content="noindex, nofollow" />}
         {settings.base && <base href={settings.base} />}
         {settings.favicon ? (
           <>
@@ -425,7 +439,7 @@ function Home({ initialSettings }) {
       <div
         className={classNames(
           settings.fullWidth ? "" : "container",
-          "relative m-auto flex flex-col justify-start z-10 h-full",
+          "relative m-auto flex flex-col justify-start z-10 h-full min-h-screen",
         )}
       >
         <QuickLaunch

@@ -164,7 +164,11 @@ export default function Component({ service }) {
   const { mappings = [], display = "block" } = widget;
   const { data: customData, error: customError } = useWidgetAPI(widget, null);
 
-  if (customError) {
+  // if mappings includes an error field and the data contains an error field then show data even if there is an error
+  const mappingsIncludesError = Array.isArray(mappings) && mappings.find((mapping) => mapping.field === "error");
+  const errorIsData = customData && typeof customData === "object" && "error" in customData;
+
+  if (customError && !(mappingsIncludesError && errorIsData)) {
     return <Container service={service} error={customError} />;
   }
 
