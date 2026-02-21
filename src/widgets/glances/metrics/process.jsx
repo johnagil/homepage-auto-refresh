@@ -42,7 +42,7 @@ export default function Component({ service }) {
   let listYPosition = "bottom-4";
   if (chart) {
     headerYPosition = "-top-6";
-    listYPosition = "-top-3";
+    listYPosition = "-top-2";
   }
 
   return (
