@@ -4,6 +4,7 @@ import { useTranslation } from "next-i18next";
 import Block from "../components/block";
 import Container from "../components/container";
 
+import { parseVersionForUrl } from "utils/proxy/api-helpers";
 import useWidgetAPI from "utils/proxy/use-widget-api";
 
 const statusMap = {
@@ -19,11 +20,14 @@ const statusMap = {
 export default function Component({ service }) {
   const { t } = useTranslation();
   const { widget } = service;
-  const { chart, version = 3 } = widget;
+  const { chart, refreshInterval = defaultInterval, version = 3 } = widget;
+  const apiVersion = parseVersionForUrl(version, 3);
 
-  const memoryInfoKey = version === 3 ? 0 : "rss";
+  const memoryInfoKey = apiVersion === 3 ? 0 : "rss";
 
-  const { data, error } = useWidgetAPI(service.widget, `${version}/processlist`);
+  const { data, error } = useWidgetAPI(service.widget, `${apiVersion}/processlist`, {
+    refreshInterval: Math.max(defaultInterval, refreshInterval),
+  });
 
   if (error) {
     return <Container service={service} widget={widget} />;

@@ -16,6 +16,7 @@ The Glances widget allows you to monitor the resources (CPU, memory, storage, te
     cpu: true # optional, enabled by default, disable by setting to false
     mem: true # optional, enabled by default, disable by setting to false
     cputemp: true # disabled by default
+    unit: imperial # optional for temp, default is metric
     uptime: true # disabled by default
     disk: / # disabled by default, use mount point of disk(s) in glances. Can also be a list (see below)
     diskUnits: bytes # optional, bytes (default) or bbytes. Only applies to disk
@@ -31,5 +32,3 @@ disk:
   - /boot
   ...
 ```
-
-_Added in v0.4.18, updated in v0.6.11, v0.6.21_

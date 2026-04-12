@@ -46,7 +46,6 @@ describe("widgets/qbittorrent/component", () => {
     const service = { widget: { type: "qbittorrent", enableLeechProgress: true } };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
-    // total=2, completed=1 => leech=1
     expectBlockValue(container, "qbittorrent.leech", 1);
     expectBlockValue(container, "qbittorrent.seed", 1);
     expectBlockValue(container, "qbittorrent.download", 15);

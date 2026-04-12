@@ -129,7 +129,7 @@ A progressive web app is an app that can be installed on a device and provide us
 
 More information on PWAs can be found in [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps).
 
-## App icons
+### App icons
 
 You can set custom icons for installable apps. More information about how you can set them can be found in the [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest/Reference/icons).
 
@@ -150,7 +150,7 @@ For icon `src` you can pass either full URL or a local path relative to the `/ap
 
 ### Shortcuts
 
-Shortcuts can e used to specify links to tabs, to be preselected when the homepage is opened as an app.
+Shortcuts can be used to specify links to tabs, to be preselected when the homepage is opened as an app.
 More information about how you can set them can be found in the [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest/Reference/shortcuts).
 
 ```yaml
