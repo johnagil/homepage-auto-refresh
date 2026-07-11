@@ -1,0 +1,36 @@
+name: PR Triage
+
+on:
+  pull_request_target:
+    types: [labeled]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  close-needs-requirements:
+    name: PRs Need Requirements
+    if: github.event.label.name == 'needs-requirements'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const pullNumber = context.payload.pull_request.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: pullNumber,
+              body: 'Dear contributor, thanks for taking the time to open this pull request! It is being closed because it does not currently meet the pull request guidelines. Please review the checklist in the pull request template and the relevant [contributing guidelines](https://gethomepage.dev/widgets/authoring/getting-started/#new-feature-guidelines) before opening a new pull request.',
+            });
+
+            await github.rest.pulls.update({
+              owner,
+              repo,
+              pull_number: pullNumber,
+              state: 'closed',
+            });

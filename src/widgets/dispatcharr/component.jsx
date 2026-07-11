@@ -1,6 +1,6 @@
 import Block from "components/services/widget/block";
 import Container from "components/services/widget/container";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next/pages";
 
 import useWidgetAPI from "utils/proxy/use-widget-api";
 
@@ -50,10 +50,10 @@ export default function Component({ service }) {
         streams?.channels &&
         streams.channels.map((activeStream) => (
           <StreamEntry
-            title={activeStream.stream_name}
+            title={activeStream.channel_name ?? activeStream.stream_name}
             clients={activeStream.clients.length}
             bitrate={activeStream.avg_bitrate}
-            key={activeStream.stream_name}
+            key={activeStream.channel_name ?? activeStream.stream_name}
           />
         ))}
     </>

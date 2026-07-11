@@ -26,6 +26,7 @@ nav:
       - configs/kubernetes.md
       - configs/docker.md
       - configs/proxmox.md
+      - configs/mcp.md
       - configs/custom-css-js.md
   - "Widgets":
       - widgets/index.md
@@ -116,6 +117,7 @@ nav:
           - widgets/services/nextcloud.md
           - widgets/services/nextdns.md
           - widgets/services/nginx-proxy-manager.md
+          - widgets/services/ntfy.md
           - widgets/services/nzbget.md
           - widgets/services/octoprint.md
           - widgets/services/omada.md
@@ -140,6 +142,7 @@ nav:
           - widgets/services/proxmox.md
           - widgets/services/proxmoxbackupserver.md
           - widgets/services/pterodactyl.md
+          - widgets/services/pulse.md
           - widgets/services/pyload.md
           - widgets/services/qbittorrent.md
           - widgets/services/qnap.md

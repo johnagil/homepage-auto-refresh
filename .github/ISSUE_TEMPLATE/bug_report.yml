@@ -15,7 +15,7 @@ body:
       options:
         - label: I confirm this was discussed, and the maintainers asked that I open an issue.
           required: true
-        - label: I am aware that if I create this issue without a discussion, it will be removed without a response.
+        - label: I am aware that if I create this issue without a discussion, it will be closed without a response.
           required: true
   - type: input
     id: discussion

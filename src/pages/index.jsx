@@ -7,8 +7,8 @@ import ServicesGroup from "components/services/group";
 import Tab, { slugifyAndEncode } from "components/tab";
 import Revalidate from "components/toggles/revalidate";
 import Widget from "components/widgets/widget";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "next-i18next/pages";
+import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -167,11 +167,13 @@ function Index({ initialSettings, fallback }) {
             >
               <div className="bg-amber-200 text-amber-800 dark:text-amber-200 dark:bg-amber-800 p-2 rounded-md font-bold">
                 <BiError className="float-right w-6 h-6" />
-                {error.config}
+                {error.name} - {error.config}
               </div>
               <div className="p-2 text-theme-100 dark:text-theme-200">
-                <pre className="opacity-50 font-bold pb-2">{error.reason}</pre>
-                <pre className="text-sm">{error.mark.snippet}</pre>
+                <pre className="opacity-50 font-bold pb-2">
+                  Reason: "{error.reason}" at line {error.mark?.line}
+                </pre>
+                <pre className="font-italic">Check logs for details.</pre>
               </div>
             </div>
           ))}

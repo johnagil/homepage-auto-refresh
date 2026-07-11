@@ -1,0 +1,90 @@
+name: Issue Triage
+
+on:
+  issues:
+    types: [labeled]
+  discussion:
+    types: [labeled]
+
+permissions:
+  discussions: write
+  issues: write
+
+jobs:
+  close-needs-discussion:
+    name: Issues Need Discussion
+    if: github.event_name == 'issues' && github.event.label.name == 'needs-discussion'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const issueNumber = context.payload.issue.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: issueNumber,
+              body: 'This issue is being closed because it was opened before a maintainer asked for an issue to be created. Please start with a discussion and follow the issue template; only open an issue when a maintainer asks you to do so.',
+            });
+
+            await github.rest.issues.update({
+              owner,
+              repo,
+              issue_number: issueNumber,
+              state: 'closed',
+              state_reason: 'not_planned',
+            });
+
+            await github.rest.issues.lock({
+              owner,
+              repo,
+              issue_number: issueNumber,
+              lock_reason: 'off-topic',
+            });
+
+  comment-needs-information:
+    name: Discussions Need Information
+    if: github.event_name == 'discussion' && github.event.label.name == 'needs-information'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const discussionNumber = context.payload.discussion.number;
+            let discussionId = context.payload.discussion.node_id;
+
+            if (!discussionId) {
+              const result = await github.graphql(
+                `query($owner:String!, $repo:String!, $number:Int!) {
+                  repository(owner:$owner, name:$repo) {
+                    discussion(number:$number) {
+                      id
+                    }
+                  }
+                }`,
+                {
+                  owner,
+                  repo,
+                  number: discussionNumber,
+                },
+              );
+
+              discussionId = result.repository.discussion.id;
+            }
+
+            await github.graphql(
+              `mutation($discussion:ID!, $body:String!) {
+                addDiscussionComment(input:{discussionId:$discussion, body:$body}) {
+                  clientMutationId
+                }
+              }`,
+              {
+                discussion: discussionId,
+                body: 'Dear homepage user, thanks for opening this discussion! Please ensure you add the output from the troubleshooting guide steps, the support template asks for those details because they usually make it possible to understand the problem without guessing. Please update the discussion with the relevant troubleshooting output, configuration, logs, and browser console details where applicable: https://gethomepage.dev/troubleshooting/. Thank you!',
+              },
+            );

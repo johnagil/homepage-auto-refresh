@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next/pages";
 import { useContext } from "react";
 import { FaMemory, FaRegClock, FaThermometerHalf } from "react-icons/fa";
 import { FiCpu, FiHardDrive } from "react-icons/fi";
@@ -11,10 +11,14 @@ import Resource from "../widget/resource";
 import Resources from "../widget/resources";
 import WidgetLabel from "../widget/widget_label";
 
-const cpuSensorLabels = ["cpu_thermal", "Core", "Tctl", "Temperature"];
+const defaultCpuSensorLabels = ["cpu_thermal", "Core", "Tctl", "Temperature"];
 
 function convertToFahrenheit(t) {
   return (t * 9) / 5 + 32;
+}
+
+function getCpuSensorLabels(options) {
+  return [...defaultCpuSensorLabels, options.cpuSensorLabel].filter(Boolean);
 }
 
 export default function Widget({ options }) {
@@ -38,7 +42,6 @@ export default function Widget({ options }) {
       <Resources options={options} additionalClassNames="information-widget-glances">
         {options.cpu !== false && <Resource icon={FiCpu} label={t("glances.wait")} percentage="0" />}
         {options.mem !== false && <Resource icon={FaMemory} label={t("glances.wait")} percentage="0" />}
-        {options.cputemp && <Resource icon={FaThermometerHalf} label={t("glances.wait")} percentage="0" />}
         {options.disk && !Array.isArray(options.disk) && (
           <Resource key={options.disk} icon={FiHardDrive} label={t("glances.wait")} percentage="0" />
         )}
@@ -47,6 +50,7 @@ export default function Widget({ options }) {
           options.disk.map((disk) => (
             <Resource key={`disk_${disk}`} icon={FiHardDrive} label={t("glances.wait")} percentage="0" />
           ))}
+        {options.cputemp && <Resource icon={FaThermometerHalf} label={t("glances.wait")} percentage="0" />}
         {options.uptime && <Resource icon={FaRegClock} label={t("glances.wait")} percentage="0" />}
         {options.label && <WidgetLabel label={options.label} />}
       </Resources>
@@ -56,6 +60,7 @@ export default function Widget({ options }) {
   const unit = options.units === "imperial" ? "fahrenheit" : "celsius";
   let mainTemp = 0;
   let maxTemp = 80;
+  const cpuSensorLabels = getCpuSensorLabels(options);
   const cpuSensors = data.sensors?.filter(
     (s) => cpuSensorLabels.some((label) => s.label.startsWith(label)) && s.type === "temperature_core",
   );

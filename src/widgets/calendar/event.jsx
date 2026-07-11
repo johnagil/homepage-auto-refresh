@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { DateTime } from "luxon";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next/pages";
 import { useState } from "react";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 
@@ -39,8 +39,8 @@ export default function Event({ event, colorVariants, showDate = false, showTime
   return event.url ? (
     <a
       className={classNames(className, "hover:bg-theme-300/50 dark:hover:bg-theme-800/20")}
-      onMouseEnter={() => setHover(!hover)}
-      onMouseLeave={() => setHover(!hover)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
       key={key}
       href={event.url}
       target="_blank"
@@ -49,7 +49,7 @@ export default function Event({ event, colorVariants, showDate = false, showTime
       {children}
     </a>
   ) : (
-    <div className={className} onMouseEnter={() => setHover(!hover)} onMouseLeave={() => setHover(!hover)} key={key}>
+    <div className={className} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} key={key}>
       {children}
     </div>
   );
