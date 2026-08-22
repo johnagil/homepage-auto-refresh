@@ -3,12 +3,19 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-const { getSettingsMock } = vi.hoisted(() => ({
+const { getSettingsMock, authOptionsMock } = vi.hoisted(() => ({
   getSettingsMock: vi.fn(),
+  authOptionsMock: vi.fn(),
 }));
 
 vi.mock("utils/config/config", () => ({
   getSettings: getSettingsMock,
+}));
+
+vi.mock("pages/api/auth/[...nextauth]", () => ({
+  get authOptions() {
+    return authOptionsMock();
+  },
 }));
 
 vi.mock("next/router", () => ({
@@ -17,7 +24,6 @@ vi.mock("next/router", () => ({
   }),
 }));
 
-import { getProviders } from "next-auth/react";
 import SignInPage, { getServerSideProps } from "pages/auth/signin";
 
 describe("pages/auth/signin", () => {
@@ -33,7 +39,7 @@ describe("pages/auth/signin", () => {
       />,
     );
 
-    expect(screen.getByText("Authentication not configured")).toBeInTheDocument();
+    expect(screen.getByText("Authentication error")).toBeInTheDocument();
 
     await waitFor(() => {
       expect(document.documentElement.classList.contains("dark")).toBe(true);
@@ -60,19 +66,88 @@ describe("pages/auth/signin", () => {
     expect(screen.getByRole("button", { name: /login via oidc/i })).toBeInTheDocument();
   });
 
-  it("getServerSideProps returns providers and settings", async () => {
-    getProviders.mockResolvedValueOnce({ foo: { id: "foo", name: "Foo" } });
+  it("getServerSideProps returns providers and only public sign-in settings", async () => {
+    authOptionsMock.mockReturnValueOnce({ providers: [{ id: "foo", name: "Foo", type: "oauth" }] });
+    getSettingsMock.mockReturnValueOnce({
+      theme: "dark",
+      color: "slate",
+      title: "Homepage",
+      background: { image: "background.jpg", opacity: 20 },
+      backgroundOpacity: 10,
+      providers: {
+        longhorn: {
+          username: "admin",
+          password: "secret",
+        },
+      },
+      layout: { Internal: { style: "row" } },
+    });
+
+    const res = await getServerSideProps({});
+
+    expect(getSettingsMock).toHaveBeenCalled();
+    expect(res).toEqual({
+      props: {
+        providers: { foo: { id: "foo", name: "Foo", type: "oauth" } },
+        settings: {
+          theme: "dark",
+          color: "slate",
+          title: "Homepage",
+          background: { image: "background.jpg", opacity: 20 },
+          backgroundOpacity: 10,
+        },
+      },
+    });
+    expect(res.props.settings).not.toHaveProperty("providers");
+    expect(res.props.settings).not.toHaveProperty("layout");
+  });
+
+  it("getServerSideProps falls back to no providers when auth options fail to load", async () => {
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    authOptionsMock.mockImplementationOnce(() => {
+      throw new Error("Homepage auth is enabled but HOMEPAGE_EXTERNAL_URL (or NEXTAUTH_URL) is missing.");
+    });
     getSettingsMock.mockReturnValueOnce({ theme: "dark" });
 
     const res = await getServerSideProps({});
 
-    expect(getProviders).toHaveBeenCalled();
-    expect(getSettingsMock).toHaveBeenCalled();
-    expect(res).toEqual({
-      props: {
-        providers: { foo: { id: "foo", name: "Foo" } },
-        settings: { theme: "dark" },
-      },
+    expect(res.props.providers).toEqual({});
+    expect(consoleError).toHaveBeenCalled();
+    consoleError.mockRestore();
+  });
+
+  it("getServerSideProps passes only id, name and type from each provider", async () => {
+    authOptionsMock.mockReturnValueOnce({
+      providers: [
+        {
+          id: "homepage-oidc",
+          name: "Homepage OIDC",
+          type: "oauth",
+          issuer: "https://oidc.example",
+          clientId: "canary-client-id",
+          clientSecret: "canary-client-secret",
+          wellKnown: "https://oidc.example/.well-known/openid-configuration",
+          authorization: { params: { scope: "openid email profile" } },
+          profile: () => ({}),
+        },
+        {
+          id: "credentials",
+          name: "Password",
+          type: "credentials",
+          credentials: { password: { label: "Password", type: "password" } },
+          authorize: () => null,
+        },
+      ],
     });
+    getSettingsMock.mockReturnValueOnce({ theme: "dark" });
+
+    const res = await getServerSideProps({});
+
+    expect(res.props.providers).toEqual({
+      "homepage-oidc": { id: "homepage-oidc", name: "Homepage OIDC", type: "oauth" },
+      credentials: { id: "credentials", name: "Password", type: "credentials" },
+    });
+    // These props get serialized into the sign-in page, which is unauthenticated
+    expect(JSON.stringify(res.props)).not.toMatch(/canary-client-secret|canary-client-id|oidc\.example/);
   });
 });

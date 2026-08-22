@@ -3,26 +3,24 @@ import Container from "components/services/widget/container";
 import { useTranslation } from "next-i18next/pages";
 
 import useWidgetAPI from "utils/proxy/use-widget-api";
+import withWidgetFields from "utils/widget-fields";
 
-const MAX_FIELDS = 4;
+const DEFAULT_FIELDS = ["running", "stopped", "total", "image_updates"];
 
-export default function Component({ service }) {
+export default function Component({ service: configuredService }) {
   const { t } = useTranslation();
+  const service = withWidgetFields(configuredService, DEFAULT_FIELDS);
   const { widget } = service;
 
-  if (!widget.fields) {
-    widget.fields = ["running", "stopped", "total", "image_updates"];
-  } else if (widget.fields.length > MAX_FIELDS) {
-    widget.fields = widget.fields.slice(0, MAX_FIELDS);
-  }
+  const envNotSet = widget.env == null || widget.env === "";
 
-  if (widget?.env == null || widget.env === "") {
+  const { data: containers, error: containersError } = useWidgetAPI(widget, envNotSet ? "" : "containers");
+  const { data: images, error: imagesError } = useWidgetAPI(widget, envNotSet ? "" : "images");
+  const { data: updates, error: updatesError } = useWidgetAPI(widget, envNotSet ? "" : "updates");
+
+  if (envNotSet) {
     return <Container service={service} error={t("arcane.environment_required")} />;
   }
-
-  const { data: containers, error: containersError } = useWidgetAPI(widget, "containers");
-  const { data: images, error: imagesError } = useWidgetAPI(widget, "images");
-  const { data: updates, error: updatesError } = useWidgetAPI(widget, "updates");
 
   const error =
     containersError ?? imagesError ?? updatesError ?? containers?.detail ?? images?.detail ?? updates?.detail;

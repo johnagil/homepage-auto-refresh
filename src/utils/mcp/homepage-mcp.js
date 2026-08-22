@@ -1,15 +1,19 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
+import { createHash, timingSafeEqual } from "node:crypto";
 import { join } from "path";
 
-import yaml from "js-yaml";
+import * as yaml from "js-yaml";
 
 import { CONF_DIR } from "utils/config/config";
+import { loadYaml } from "utils/config/yaml";
 
 const PROTOCOL_VERSION = "2025-11-25";
 const SERVER_INFO = {
   name: "homepage",
   version: "1.0.0",
 };
+
+const MIN_TOKEN_LENGTH = 32;
 
 const CONFIG_FILES = [
   "settings.yaml",
@@ -61,8 +65,10 @@ function requiredToken() {
   return process.env.HOMEPAGE_MCP_TOKEN;
 }
 
-function authEnabled() {
-  return Boolean(process.env.HOMEPAGE_AUTH_ENABLED);
+function tokenMatches(provided, expectedDigest) {
+  if (typeof provided !== "string") return false;
+  const providedDigest = createHash("sha256").update(provided, "utf8").digest();
+  return timingSafeEqual(providedDigest, expectedDigest);
 }
 
 function jsonRpcResult(id, result) {
@@ -113,7 +119,7 @@ function readConfig(file) {
 }
 
 function parseYamlConfig(file) {
-  const parsed = yaml.load(readConfig(file) || "");
+  const parsed = loadYaml(readConfig(file) || "");
   return parsed ?? [];
 }
 
@@ -123,7 +129,7 @@ function validateYaml(file, content) {
   }
 
   try {
-    yaml.load(content || "");
+    loadYaml(content || "");
     return { valid: true };
   } catch (error) {
     return {
@@ -439,16 +445,23 @@ export function mcpEnabled() {
   return enabled();
 }
 
-export function mcpTokenAuthorized(req) {
+export function mcpTokenConfigError() {
+  if (!enabled()) return null;
   const token = requiredToken();
-  if (!token) return false;
-
-  const authHeader = req.headers.authorization;
-  return authHeader === `Bearer ${token}` || req.headers["x-homepage-mcp-token"] === token;
+  if (token && token.length < MIN_TOKEN_LENGTH) {
+    return `HOMEPAGE_MCP_TOKEN must be at least ${MIN_TOKEN_LENGTH} characters. Generate one with: openssl rand -base64 32`;
+  }
+  return null;
 }
 
-export function mcpAuthorized(req) {
-  return mcpTokenAuthorized(req) || (!requiredToken() && !authEnabled());
+export function mcpTokenAuthorized(req) {
+  const token = requiredToken();
+  if (!token || token.length < MIN_TOKEN_LENGTH) return false;
+
+  const authHeader = req.headers.authorization;
+  const bearerToken = typeof authHeader === "string" && authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
+  const expectedDigest = createHash("sha256").update(token, "utf8").digest();
+  return tokenMatches(bearerToken, expectedDigest) || tokenMatches(req.headers["x-homepage-mcp-token"], expectedDigest);
 }
 
 export function handleMcpRequest(message) {

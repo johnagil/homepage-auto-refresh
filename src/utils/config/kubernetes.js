@@ -1,17 +1,18 @@
 import { readFileSync } from "fs";
+import { isIPv6 } from "net";
 import path from "path";
 
 import { ApiextensionsV1Api, KubeConfig } from "@kubernetes/client-node";
-import yaml from "js-yaml";
 
 import checkAndCopyConfig, { CONF_DIR, substituteEnvironmentVars } from "utils/config/config";
+import { loadYaml } from "utils/config/yaml";
 
 export function getKubernetes() {
   checkAndCopyConfig("kubernetes.yaml");
   const configFile = path.join(CONF_DIR, "kubernetes.yaml");
   const rawConfigData = readFileSync(configFile, "utf8");
   const configData = substituteEnvironmentVars(rawConfigData);
-  return yaml.load(configData);
+  return loadYaml(configData);
 }
 
 export const getKubeConfig = () => {
@@ -21,6 +22,10 @@ export const getKubeConfig = () => {
   switch (config?.mode) {
     case "cluster":
       kc.loadFromCluster();
+      // node < 26 can't match an IPv6 host against an IP SAN, so verify against the DNS SAN instead (nodejs/node#64032)
+      if (isIPv6(process.env.KUBERNETES_SERVICE_HOST ?? "")) {
+        kc.clusters = kc.clusters.map((cluster) => ({ ...cluster, tlsServerName: "kubernetes.default.svc" }));
+      }
       break;
     case "default":
       kc.loadFromDefault();

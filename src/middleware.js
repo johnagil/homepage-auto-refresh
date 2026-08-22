@@ -1,14 +1,19 @@
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 
-const authEnabled = Boolean(process.env.HOMEPAGE_AUTH_ENABLED);
+import { isAuthEnabled } from "utils/env";
+
+const authEnabled = isAuthEnabled();
 const authSecret = process.env.NEXTAUTH_SECRET || process.env.HOMEPAGE_AUTH_SECRET;
 
-function hasMcpToken(req) {
-  const token = process.env.HOMEPAGE_MCP_TOKEN;
-  if (!token) return false;
-
-  return req.headers.get("authorization") === `Bearer ${token}` || req.headers.get("x-homepage-mcp-token") === token;
+// Prerendered pages carry `s-maxage`, and the dashboard HTML embeds the service and
+// bookmark inventory. Without this, a CDN or caching reverse proxy in front of Homepage
+// would store an authenticated response and serve it to anonymous visitors.
+function withPrivateCache(res) {
+  if (authEnabled) {
+    res.headers.set("Cache-Control", "private, no-store");
+  }
+  return res;
 }
 
 export async function middleware(req) {
@@ -27,20 +32,23 @@ export async function middleware(req) {
     return NextResponse.json({ error: "Host validation failed. See logs for more details." }, { status: 400 });
   }
 
-  if (authEnabled && !new URL(req.url).pathname.startsWith("/api/healthcheck")) {
-    if (new URL(req.url).pathname === "/api/mcp" && hasMcpToken(req)) {
-      return NextResponse.next();
+  const pathname = new URL(req.url).pathname;
+  const isPublicAuthPath = pathname.startsWith("/api/healthcheck") || pathname === "/api/config/custom.css";
+  if (authEnabled && !isPublicAuthPath) {
+    // The MCP API handler authorizes both bearer tokens and Homepage sessions.
+    if (pathname === "/api/mcp") {
+      return withPrivateCache(NextResponse.next());
     }
 
     const token = await getToken({ req, secret: authSecret });
     if (!token) {
       const signInUrl = new URL("/auth/signin", req.url);
       signInUrl.searchParams.set("callbackUrl", "/");
-      return NextResponse.redirect(signInUrl);
+      return withPrivateCache(NextResponse.redirect(signInUrl));
     }
   }
 
-  return NextResponse.next();
+  return withPrivateCache(NextResponse.next());
 }
 
 export const config = {

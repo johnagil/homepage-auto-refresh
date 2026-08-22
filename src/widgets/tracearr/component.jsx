@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import Block from "components/services/widget/block";
 import Container from "components/services/widget/container";
 import { useTranslation } from "next-i18next/pages";
@@ -233,7 +232,7 @@ export default function Component({ service }) {
     );
   }
 
-  const playing = activityData.data.sort((a, b) => a.progressMs - b.progressMs);
+  const playing = [...activityData.data].sort((a, b) => a.progressMs - b.progressMs);
   const { summary } = activityData;
 
   if (view === "summary") {

@@ -20,6 +20,9 @@
         "minutes": "m",
         "seconds": "s"
     },
+    "auth": {
+        "signout": "Odhlásit se"
+    },
     "widget": {
         "missing_type": "Chybí typ widgetu: {{type}}",
         "api_error": "Chyba API",
@@ -71,6 +74,15 @@
         "degraded": "Degradováno",
         "no_data": "Nejsou k dispozici žádná data úložiště"
     },
+    "duplicati": {
+        "jobs": "Úlohy",
+        "stored": "Uloženo",
+        "lastBackup": "Naposledy spuštěno",
+        "nextRun": "Další spuštění",
+        "running": "Běží",
+        "warnings": "Upozornění",
+        "errors": "Chyby"
+    },
     "docker": {
         "rx": "RX",
         "tx": "TX",
@@ -120,7 +132,8 @@
         "movies": "Filmy",
         "series": "Seriály",
         "episodes": "Epizody",
-        "songs": "Skladby"
+        "songs": "Skladby",
+        "albums": "Alba"
     },
     "esphome": {
         "offline": "Offline",
@@ -458,13 +471,19 @@
     "authentik": {
         "users": "Uživatelé",
         "loginsLast24H": "Příhlášení (24h)",
-        "failedLoginsLast24H": "Neúspěšná přihlášení (24h)"
+        "failedLoginsLast24H": "Neúspěšná přihlášení (24h)",
+        "authorizationsLast24H": "Autorizace (24h)"
     },
     "proxmox": {
         "mem": "Využití paměti",
         "cpu": "Využití procesoru",
         "lxc": "LXC",
         "vms": "Virtuální Stroje"
+    },
+    "pulse": {
+        "nodes": "Uzly (Nody)",
+        "vms": "Virtuální Stroje",
+        "lxcs": "LXC"
     },
     "glances": {
         "cpu": "Využití procesoru",
@@ -932,6 +951,17 @@
         "mails": "Maily",
         "storage": "Úložiště"
     },
+    "maintainerr": {
+        "itemsHandled": "Zpracované položky",
+        "episodesHandled": "Zpracované epizody",
+        "moviesHandled": "Zpracované filmy",
+        "showsHandled": "Zpracované seriály",
+        "seasonsHandled": "Zpracované série",
+        "reclaimable": "Uvolnitelné",
+        "movieReclaimable": "Uvolnitelné filmy",
+        "showReclaimable": "Uvolnitelné seriály",
+        "totalCapacity": "Celková kapacita"
+    },
     "netdata": {
         "warnings": "Upozornění",
         "criticals": "Kritické"
@@ -1210,5 +1240,16 @@
         "burned": "Spáleno",
         "remaining": "Zbývá",
         "steps": "Kroky"
+    },
+    "syncthing": {
+        "connected": "Připojeno",
+        "synced": "Synchronizováno",
+        "errors": "Chyby",
+        "storage": "Úložiště"
+    },
+    "sportarr": {
+        "wanted": "Požadované",
+        "queued": "Ve frontě",
+        "leagues": "Ligy"
     }
 }

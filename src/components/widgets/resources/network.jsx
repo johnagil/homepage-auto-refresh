@@ -7,10 +7,9 @@ import Resource from "../widget/resource";
 
 export default function Network({ options, refresh = 1500 }) {
   const { t } = useTranslation();
-  // eslint-disable-next-line no-param-reassign
-  if (options.network === true) options.network = "default";
+  const network = options.network === true ? "default" : options.network;
 
-  const { data, error } = useSWR(`/api/widgets/resources?type=network&interfaceName=${options.network}`, {
+  const { data, error } = useSWR(`/api/widgets/resources?type=network&interfaceName=${network}`, {
     refreshInterval: refresh,
   });
 

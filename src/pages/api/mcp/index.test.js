@@ -1,10 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const { getServerSession } = vi.hoisted(() => ({
+const { getServerSession, errorMock } = vi.hoisted(() => ({
   getServerSession: vi.fn(),
+  errorMock: vi.fn(),
 }));
 
 vi.mock("next-auth/next", () => ({ getServerSession }));
+vi.mock("utils/logger", () => ({ default: () => ({ error: errorMock, warn: vi.fn(), debug: vi.fn() }) }));
 
 function mockResponse() {
   const res = {
@@ -41,6 +43,7 @@ describe("pages/api/mcp", () => {
   beforeEach(() => {
     vi.resetModules();
     getServerSession.mockReset();
+    errorMock.mockReset();
     process.env = { ...originalEnv };
   });
 
@@ -60,7 +63,7 @@ describe("pages/api/mcp", () => {
 
   it("requires bearer token when configured", async () => {
     process.env.HOMEPAGE_MCP_ENABLED = "true";
-    process.env.HOMEPAGE_MCP_TOKEN = "secret";
+    process.env.HOMEPAGE_MCP_TOKEN = "mcp-tok-0123456789abcdefghijklmnopqrstuv";
     const handler = await loadHandler();
     const res = mockResponse();
 
@@ -69,16 +72,50 @@ describe("pages/api/mcp", () => {
     expect(res.status).toHaveBeenCalledWith(401);
   });
 
+  it("fails closed with 500 when the configured MCP token is too short", async () => {
+    process.env.HOMEPAGE_MCP_ENABLED = "true";
+    process.env.HOMEPAGE_MCP_TOKEN = "change-me";
+    const handler = await loadHandler();
+    const res = mockResponse();
+
+    // even presenting the weak token verbatim must not authorize
+    await handler(
+      {
+        method: "POST",
+        headers: { authorization: "Bearer change-me" },
+        body: { jsonrpc: "2.0", id: 1, method: "tools/list" },
+      },
+      res,
+    );
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(getServerSession).not.toHaveBeenCalled();
+    expect(errorMock).toHaveBeenCalledWith(expect.stringContaining("at least 32 characters"));
+  });
+
+  it("rejects requests when neither Homepage auth nor an MCP token is configured", async () => {
+    process.env.HOMEPAGE_MCP_ENABLED = "true";
+    delete process.env.HOMEPAGE_AUTH_ENABLED;
+    delete process.env.HOMEPAGE_MCP_TOKEN;
+    const handler = await loadHandler();
+    const res = mockResponse();
+
+    await handler({ method: "POST", headers: {}, body: { jsonrpc: "2.0", id: 1, method: "tools/list" } }, res);
+
+    expect(getServerSession).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(401);
+  });
+
   it("handles JSON-RPC requests when enabled and authorized", async () => {
     process.env.HOMEPAGE_MCP_ENABLED = "true";
-    process.env.HOMEPAGE_MCP_TOKEN = "secret";
+    process.env.HOMEPAGE_MCP_TOKEN = "mcp-tok-0123456789abcdefghijklmnopqrstuv";
     const handler = await loadHandler();
     const res = mockResponse();
 
     await handler(
       {
         method: "POST",
-        headers: { authorization: "Bearer secret" },
+        headers: { authorization: "Bearer mcp-tok-0123456789abcdefghijklmnopqrstuv" },
         body: { jsonrpc: "2.0", id: 1, method: "tools/list" },
       },
       res,
@@ -92,7 +129,8 @@ describe("pages/api/mcp", () => {
     process.env.HOMEPAGE_MCP_ENABLED = "true";
     process.env.HOMEPAGE_AUTH_ENABLED = "true";
     process.env.HOMEPAGE_AUTH_PASSWORD = "password";
-    process.env.HOMEPAGE_AUTH_SECRET = "auth-secret";
+    process.env.HOMEPAGE_AUTH_SECRET = "rk3Xk9wQ0mVJt7cZbN2yLpA8sHdF4gRuEwTiOaSvBnM=";
+    process.env.HOMEPAGE_EXTERNAL_URL = "https://homepage.example";
     getServerSession.mockResolvedValueOnce({ user: { name: "Homepage" } });
     const handler = await loadHandler();
     const res = mockResponse();
@@ -108,7 +146,8 @@ describe("pages/api/mcp", () => {
     process.env.HOMEPAGE_MCP_ENABLED = "true";
     process.env.HOMEPAGE_AUTH_ENABLED = "true";
     process.env.HOMEPAGE_AUTH_PASSWORD = "password";
-    process.env.HOMEPAGE_AUTH_SECRET = "auth-secret";
+    process.env.HOMEPAGE_AUTH_SECRET = "rk3Xk9wQ0mVJt7cZbN2yLpA8sHdF4gRuEwTiOaSvBnM=";
+    process.env.HOMEPAGE_EXTERNAL_URL = "https://homepage.example";
     getServerSession.mockResolvedValueOnce(null);
     const handler = await loadHandler();
     const res = mockResponse();
@@ -123,15 +162,16 @@ describe("pages/api/mcp", () => {
     process.env.HOMEPAGE_MCP_ENABLED = "true";
     process.env.HOMEPAGE_AUTH_ENABLED = "true";
     process.env.HOMEPAGE_AUTH_PASSWORD = "password";
-    process.env.HOMEPAGE_AUTH_SECRET = "auth-secret";
-    process.env.HOMEPAGE_MCP_TOKEN = "secret";
+    process.env.HOMEPAGE_AUTH_SECRET = "rk3Xk9wQ0mVJt7cZbN2yLpA8sHdF4gRuEwTiOaSvBnM=";
+    process.env.HOMEPAGE_EXTERNAL_URL = "https://homepage.example";
+    process.env.HOMEPAGE_MCP_TOKEN = "mcp-tok-0123456789abcdefghijklmnopqrstuv";
     const handler = await loadHandler();
     const res = mockResponse();
 
     await handler(
       {
         method: "POST",
-        headers: { authorization: "Bearer secret" },
+        headers: { authorization: "Bearer mcp-tok-0123456789abcdefghijklmnopqrstuv" },
         body: { jsonrpc: "2.0", id: 1, method: "tools/list" },
       },
       res,
@@ -143,10 +183,18 @@ describe("pages/api/mcp", () => {
 
   it("returns 202 for JSON-RPC notifications", async () => {
     process.env.HOMEPAGE_MCP_ENABLED = "true";
+    process.env.HOMEPAGE_MCP_TOKEN = "mcp-tok-0123456789abcdefghijklmnopqrstuv";
     const handler = await loadHandler();
     const res = mockResponse();
 
-    await handler({ method: "POST", headers: {}, body: { jsonrpc: "2.0", method: "notifications/initialized" } }, res);
+    await handler(
+      {
+        method: "POST",
+        headers: { authorization: "Bearer mcp-tok-0123456789abcdefghijklmnopqrstuv" },
+        body: { jsonrpc: "2.0", method: "notifications/initialized" },
+      },
+      res,
+    );
 
     expect(res.status).toHaveBeenCalledWith(202);
     expect(res.end).toHaveBeenCalledWith();
@@ -154,12 +202,50 @@ describe("pages/api/mcp", () => {
 
   it("rejects non-POST requests", async () => {
     process.env.HOMEPAGE_MCP_ENABLED = "true";
+    process.env.HOMEPAGE_MCP_TOKEN = "mcp-tok-0123456789abcdefghijklmnopqrstuv";
     const handler = await loadHandler();
     const res = mockResponse();
 
-    await handler({ method: "GET", headers: {}, body: {} }, res);
+    await handler(
+      { method: "GET", headers: { authorization: "Bearer mcp-tok-0123456789abcdefghijklmnopqrstuv" }, body: {} },
+      res,
+    );
 
     expect(res.status).toHaveBeenCalledWith(405);
     expect(res.setHeader).toHaveBeenCalledWith("Allow", "POST");
+  });
+
+  it("answers unauthenticated CORS preflights with 405 rather than 401", async () => {
+    process.env.HOMEPAGE_MCP_ENABLED = "true";
+    process.env.HOMEPAGE_MCP_TOKEN = "mcp-tok-0123456789abcdefghijklmnopqrstuv";
+    const handler = await loadHandler();
+    const res = mockResponse();
+
+    // a preflight never carries the Authorization header the browser strips
+    await handler(
+      {
+        method: "OPTIONS",
+        headers: {
+          origin: "https://claude.ai",
+          "access-control-request-method": "POST",
+          "access-control-request-headers": "authorization,content-type",
+        },
+      },
+      res,
+    );
+
+    expect(res.status).toHaveBeenCalledWith(405);
+    expect(res.setHeader).toHaveBeenCalledWith("Allow", "POST");
+    expect(getServerSession).not.toHaveBeenCalled();
+  });
+
+  it("still returns 404 for non-POST requests while disabled", async () => {
+    delete process.env.HOMEPAGE_MCP_ENABLED;
+    const handler = await loadHandler();
+    const res = mockResponse();
+
+    await handler({ method: "OPTIONS", headers: {} }, res);
+
+    expect(res.status).toHaveBeenCalledWith(404);
   });
 });

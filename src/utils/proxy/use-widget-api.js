@@ -3,14 +3,15 @@ import useSWR from "swr";
 
 import { formatProxyUrl } from "./api-helpers";
 
-export default function useWidgetAPI(widget, ...options) {
-  const config = {};
-
+export default function useWidgetAPI(widget, endpoint, queryParams, swrConfig = {}) {
+  const config = { ...swrConfig };
   if (widget?.refreshInterval) {
     config.refreshInterval = Math.max(1000, widget.refreshInterval); // minimum 1000 ms
+  } else if (queryParams?.refreshInterval) {
+    config.refreshInterval = queryParams.refreshInterval;
   }
-  let url = formatProxyUrl(widget, ...options);
-  if (options[0] === "") {
+  let url = formatProxyUrl(widget, endpoint, queryParams);
+  if (endpoint === "") {
     url = null;
   }
   const { data, error, mutate } = useSWR(url, config);

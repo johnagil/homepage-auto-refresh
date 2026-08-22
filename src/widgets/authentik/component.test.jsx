@@ -30,24 +30,31 @@ describe("widgets/authentik/component", () => {
       settings: { hideErrors: false },
     });
 
-    expect(container.querySelectorAll(".service-block")).toHaveLength(3);
+    expect(container.querySelectorAll(".service-block")).toHaveLength(4);
     expect(screen.getByText("authentik.users")).toBeInTheDocument();
     expect(screen.getByText("authentik.loginsLast24H")).toBeInTheDocument();
     expect(screen.getByText("authentik.failedLoginsLast24H")).toBeInTheDocument();
+    expect(screen.getByText("authentik.authorizationsLast24H")).toBeInTheDocument();
   });
 
   it("computes v2 login/failed counts from action data", () => {
     useWidgetAPI.mockImplementation((widget, endpoint) => {
       if (endpoint === "users") return { data: { pagination: { count: 10 } }, error: undefined };
-      if (endpoint === "loginv2")
+      if (endpoint === "datav2")
         return {
           data: [
             { action: "login", count: 2 },
+            { action: "login", count: 4 },
             { action: "logout", count: 9 },
+            { action: "login_failed", count: 1 },
+            { action: "login_failed", count: 2 },
+            { action: "authorize_application", count: 10 },
+            { action: "authorize_application", count: 8 },
+            { action: null, count: null },
+            { action: "login", count: null },
           ],
           error: undefined,
         };
-      if (endpoint === "login_failedv2") return { data: [{ count: 3 }, { count: null }], error: undefined };
       return { data: undefined, error: undefined };
     });
 
@@ -55,15 +62,17 @@ describe("widgets/authentik/component", () => {
       settings: { hideErrors: false },
     });
 
-    expect(container.querySelectorAll(".service-block")).toHaveLength(3);
+    expect(container.querySelectorAll(".service-block")).toHaveLength(4);
     expectBlockValue(container, "authentik.users", 10);
-    expectBlockValue(container, "authentik.loginsLast24H", 2);
+    expectBlockValue(container, "authentik.loginsLast24H", 6);
     expectBlockValue(container, "authentik.failedLoginsLast24H", 3);
+    expectBlockValue(container, "authentik.authorizationsLast24H", 18);
   });
 
   it("computes v1 login/failed counts for entries within the last 24h window", () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date("2026-01-02T00:00:00Z"));
+    // Use midday so a mistaken previous-midnight cutoff would include the 25-hour-old entries.
+    vi.setSystemTime(new Date("2026-01-02T12:00:00Z"));
 
     const now = Date.now();
     const oneHourAgo = now - 60 * 60 * 1000;
@@ -95,6 +104,30 @@ describe("widgets/authentik/component", () => {
     });
 
     expect(container.querySelectorAll(".service-block")).toHaveLength(3);
+    expectBlockValue(container, "authentik.users", 5);
+    expectBlockValue(container, "authentik.loginsLast24H", 2);
+    expectBlockValue(container, "authentik.failedLoginsLast24H", 1);
+  });
+
+  it("falls back to v1 when no version is configured", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-01-02T00:00:00Z"));
+
+    const oneHourAgo = Date.now() - 60 * 60 * 1000;
+
+    useWidgetAPI.mockImplementation((widget, endpoint) => {
+      if (endpoint === "users") return { data: { pagination: { count: 5 } }, error: undefined };
+      if (endpoint === "login") return { data: [{ x_cord: oneHourAgo, y_cord: 2 }], error: undefined };
+      if (endpoint === "login_failed") return { data: [{ x_cord: oneHourAgo, y_cord: 1 }], error: undefined };
+      return { data: undefined, error: undefined };
+    });
+
+    // service-helpers sets version to null when the key is absent
+    const { container } = renderWithProviders(
+      <Component service={{ widget: { type: "authentik", version: null } }} />,
+      { settings: { hideErrors: false } },
+    );
+
     expectBlockValue(container, "authentik.users", 5);
     expectBlockValue(container, "authentik.loginsLast24H", 2);
     expectBlockValue(container, "authentik.failedLoginsLast24H", 1);

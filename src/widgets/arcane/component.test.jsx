@@ -20,11 +20,15 @@ describe("widgets/arcane/component", () => {
   });
 
   it("shows an environment required error when env is missing", () => {
+    useWidgetAPI.mockImplementation(() => ({ data: undefined, error: undefined }));
+
     renderWithProviders(<Component service={{ widget: { type: "arcane" } }} />, {
       settings: { hideErrors: false },
     });
 
-    expect(useWidgetAPI).not.toHaveBeenCalled();
+    // hooks always run; the empty endpoint is what skips the request
+    expect(useWidgetAPI).toHaveBeenCalledTimes(3);
+    useWidgetAPI.mock.calls.forEach((call) => expect(call[1]).toBe(""));
     expect(screen.getByText("arcane.environment_required")).toBeInTheDocument();
   });
 
@@ -53,7 +57,7 @@ describe("widgets/arcane/component", () => {
     expect(screen.getByText("arcane.image_updates")).toBeInTheDocument();
   });
 
-  it("truncates custom fields to the max allowed", () => {
+  it("renders only the first four custom fields without mutating the input", () => {
     useWidgetAPI.mockImplementation(() => ({ data: undefined, error: undefined }));
 
     const service = {
@@ -61,7 +65,8 @@ describe("widgets/arcane/component", () => {
     };
     const { container } = renderWithProviders(<Component service={service} />, { settings: { hideErrors: false } });
 
-    // sliced to first four entries
+    // The helper caps the copied fields used for rendering and leaves the configured service unchanged.
+    expect(service.widget.fields).toEqual(["running", "stopped", "total", "images", "images_unused"]);
     expect(container.querySelectorAll(".service-block")).toHaveLength(4);
     expect(screen.getByText("docker.running")).toBeInTheDocument();
     expect(screen.getByText("dockhand.stopped")).toBeInTheDocument();

@@ -6,6 +6,9 @@ import { MdOutlineSmartDisplay } from "react-icons/md";
 
 import { getURLSearchParams } from "utils/proxy/api-helpers";
 import useWidgetAPI from "utils/proxy/use-widget-api";
+import withWidgetFields from "utils/widget-fields";
+
+const DEFAULT_FIELDS = ["movies", "series", "episodes", "songs"];
 
 function ticksToTime(ticks) {
   const milliseconds = ticks / 10000;
@@ -176,6 +179,7 @@ function SessionEntry({ playCommand, session, enableUser, showEpisodeNumber, ena
 
 function CountBlocks({ service, countData }) {
   const { t } = useTranslation();
+  const { widget } = service;
 
   if (!countData) {
     return (
@@ -184,6 +188,7 @@ function CountBlocks({ service, countData }) {
         <Block label="jellyfin.series" />
         <Block label="jellyfin.episodes" />
         <Block label="jellyfin.songs" />
+        <Block label="jellyfin.albums" />
       </Container>
     );
   }
@@ -194,13 +199,15 @@ function CountBlocks({ service, countData }) {
       <Block label="jellyfin.series" value={t("common.number", { value: countData.SeriesCount })} />
       <Block label="jellyfin.episodes" value={t("common.number", { value: countData.EpisodeCount })} />
       <Block label="jellyfin.songs" value={t("common.number", { value: countData.SongCount })} />
+      <Block label="jellyfin.albums" value={t("common.number", { value: countData.AlbumCount })} />
     </Container>
   );
 }
 
-export default function Component({ service }) {
+export default function Component({ service: configuredService }) {
   const { t } = useTranslation();
 
+  const service = withWidgetFields(configuredService, DEFAULT_FIELDS);
   const { widget } = service;
   const version = widget?.version ?? 1;
   const useJellyfinV2 = version === 2;

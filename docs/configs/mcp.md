@@ -26,9 +26,9 @@ http://your-homepage-instance/api/mcp
 
 ## Authentication
 
-If Homepage auth is enabled with `HOMEPAGE_AUTH_ENABLED`, requests from an authenticated Homepage session are allowed.
+The MCP endpoint requires authentication. Requests from an authenticated Homepage session are allowed when Homepage auth is enabled with `HOMEPAGE_AUTH_ENABLED`.
 
-For MCP clients that cannot use the browser session, set `HOMEPAGE_MCP_TOKEN`. Requests can then include either of the following headers:
+For MCP clients that cannot use the browser session, set `HOMEPAGE_MCP_TOKEN`. An MCP token is required when Homepage auth is not enabled. The token grants read access to every configured service credential and, with writes enabled, control of `custom.js` (which runs in every browser), so it must be at least 32 characters — generate one with `openssl rand -base64 32`. Homepage refuses MCP requests while a shorter token is configured. Requests can include either of the following headers:
 
 ```txt
 Authorization: Bearer your-token
@@ -46,8 +46,25 @@ Example Docker Compose environment block:
 environment:
   HOMEPAGE_MCP_ENABLED: "true"
   HOMEPAGE_AUTH_ENABLED: "true"
-  HOMEPAGE_MCP_TOKEN: "change-me"
+  HOMEPAGE_MCP_TOKEN: "generate-with-openssl-rand-base64-32"
 ```
+
+## Connecting Claude Desktop
+
+Claude Desktop can use [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) to communicate with the homepage MCP endpoint in `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "homepage": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "http://localhost:3000/api/mcp", "--header", "X-Homepage-MCP-Token: your-token"]
+    }
+  }
+}
+```
+
+The **Add custom connector** option will not work: remote connectors authenticate with OAuth and cannot supply `HOMEPAGE_MCP_TOKEN`.
 
 ## Read-only by default
 

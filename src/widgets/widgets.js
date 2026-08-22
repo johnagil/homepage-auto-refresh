@@ -27,6 +27,7 @@ import diskstation from "./diskstation/widget";
 import dispatcharr from "./dispatcharr/widget";
 import dockhand from "./dockhand/widget";
 import downloadstation from "./downloadstation/widget";
+import duplicati from "./duplicati/widget";
 import emby from "./emby/widget";
 import esphome from "./esphome/widget";
 import evcc from "./evcc/widget";
@@ -66,6 +67,7 @@ import lidarr from "./lidarr/widget";
 import linkwarden from "./linkwarden/widget";
 import lubelogger from "./lubelogger/widget";
 import mailcow from "./mailcow/widget";
+import maintainerr from "./maintainerr/widget";
 import mastodon from "./mastodon/widget";
 import mealie from "./mealie/widget";
 import medusa from "./medusa/widget";
@@ -122,11 +124,13 @@ import sonarr from "./sonarr/widget";
 import sparkyfitness from "./sparkyfitness/widget";
 import speedtest from "./speedtest/widget";
 import spoolman from "./spoolman/widget";
+import sportarr from "./sportarr/widget";
 import stash from "./stash/widget";
 import stocks from "./stocks/widget";
 import strelaysrv from "./strelaysrv/widget";
 import suwayomi from "./suwayomi/widget";
 import swagdashboard from "./swagdashboard/widget";
+import syncthing from "./syncthing/widget";
 import tailscale from "./tailscale/widget";
 import tandoor from "./tandoor/widget";
 import tautulli from "./tautulli/widget";
@@ -180,6 +184,7 @@ const widgets = {
   deluge,
   develancacheui,
   diskstation,
+  duplicati,
   dispatcharr,
   dockhand,
   downloadstation,
@@ -225,6 +230,7 @@ const widgets = {
   linkwarden,
   lubelogger,
   mailcow,
+  maintainerr,
   mastodon,
   mealie,
   medusa,
@@ -283,11 +289,13 @@ const widgets = {
   sparkyfitness,
   speedtest,
   spoolman,
+  sportarr,
   stash,
   stocks,
   strelaysrv,
   swagdashboard,
   suwayomi,
+  syncthing,
   tailscale,
   tandoor,
   tautulli,
