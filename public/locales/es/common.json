@@ -39,7 +39,9 @@
         "wait": "Espera, por favor"
     },
     "search": {
-        "placeholder": "Buscar…"
+        "placeholder": "Buscar…",
+        "provider": "Motor de búsqueda: {{name}}",
+        "select_provider": "Seleccionar motores de búsqueda"
     },
     "resources": {
         "cpu": "CPU",
@@ -97,7 +99,12 @@
         "unhealthy": "No saludable",
         "not_found": "No encontrado",
         "exited": "Terminado",
-        "partial": "Parcial"
+        "partial": "Parcial",
+        "created": "Creado",
+        "paused": "Pausado",
+        "restarting": "Reiniciando",
+        "removing": "Eliminando",
+        "dead": "Muerto"
     },
     "ping": {
         "error": "Error",
@@ -248,6 +255,16 @@
         "upload": "Subida",
         "leech": "Descargando",
         "seed": "Semillas"
+    },
+    "qui": {
+        "leech": "Sanguijuela",
+        "download": "Descargar",
+        "seed": "Semilla",
+        "upload": "Subir",
+        "total": "Total",
+        "errored": "Con error",
+        "ratio": "Ratio",
+        "freeSpace": "Libre"
     },
     "qnap": {
         "cpuUsage": "Uso de la CPU",
@@ -773,7 +790,8 @@
         "queue": "Cola",
         "processing": "Procesando",
         "processed": "Procesado",
-        "time": "Tiempo"
+        "time": "Tiempo",
+        "failed": "Fallido"
     },
     "firefly": {
         "networth": "Patrimonio neto",
@@ -849,6 +867,14 @@
     "booklore": {
         "libraries": "Librerías",
         "books": "Libros",
+        "reading": "Lectura",
+        "finished": "Finalizado"
+    },
+    "bookorbit": {
+        "books": "Libros",
+        "authors": "Autores",
+        "series": "Series",
+        "storage": "Almacenamiento",
         "reading": "Lectura",
         "finished": "Finalizado"
     },
@@ -1251,5 +1277,8 @@
         "wanted": "Buscado",
         "queued": "En cola",
         "leagues": "Ligas"
+    },
+    "feed": {
+        "noItems": "No hay elementos"
     }
 }

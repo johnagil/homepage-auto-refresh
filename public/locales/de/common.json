@@ -21,7 +21,7 @@
         "seconds": "s"
     },
     "auth": {
-        "signout": "Sign out"
+        "signout": "Abmelden"
     },
     "widget": {
         "missing_type": "Fehlender Widget-Typ: {{type}}",
@@ -39,7 +39,9 @@
         "wait": "Bitte warten"
     },
     "search": {
-        "placeholder": "Suche…"
+        "placeholder": "Suche…",
+        "provider": "Suchmaschine: {{name}}",
+        "select_provider": "Suchmaschine auswählen"
     },
     "resources": {
         "cpu": "CPU",
@@ -75,13 +77,13 @@
         "no_data": "Keine Speicherdaten verfügbar"
     },
     "duplicati": {
-        "jobs": "Jobs",
-        "stored": "Stored",
-        "lastBackup": "Last Run",
-        "nextRun": "Next Run",
-        "running": "Running",
-        "warnings": "Warnings",
-        "errors": "Errors"
+        "jobs": "Aufgaben",
+        "stored": "Gespeichert",
+        "lastBackup": "Zuletzt ausgeführt",
+        "nextRun": "Nächste Ausführung",
+        "running": "Wird ausgeführt",
+        "warnings": "Warnungen",
+        "errors": "Fehler"
     },
     "docker": {
         "rx": "RX",
@@ -97,7 +99,12 @@
         "unhealthy": "Fehlerhaft",
         "not_found": "Nicht gefunden",
         "exited": "Beendet",
-        "partial": "Teilweise"
+        "partial": "Teilweise",
+        "created": "Erstellt am",
+        "paused": "Pausiert",
+        "restarting": "Wird neu gestartet",
+        "removing": "Wird entfernt",
+        "dead": "Tot"
     },
     "ping": {
         "error": "Fehler",
@@ -133,7 +140,7 @@
         "series": "Serien",
         "episodes": "Episoden",
         "songs": "Titel",
-        "albums": "Albums"
+        "albums": "Alben"
     },
     "esphome": {
         "offline": "Offline",
@@ -249,6 +256,16 @@
         "leech": "Leech",
         "seed": "Seed"
     },
+    "qui": {
+        "leech": "Leech",
+        "download": "Download",
+        "seed": "Seed",
+        "upload": "Upload",
+        "total": "Total",
+        "errored": "Errored",
+        "ratio": "Ratio",
+        "freeSpace": "Free"
+    },
     "qnap": {
         "cpuUsage": "CPU-Nutzung",
         "memUsage": "Speichernutzung",
@@ -357,15 +374,15 @@
         "address": "Adresse",
         "expires": "Läuft ab",
         "never": "Nie",
-        "user": "User",
+        "user": "Benutzer",
         "hostname": "Hostname",
         "name": "Name",
-        "client_version": "Client Version",
-        "os": "OS",
-        "created": "Created",
-        "authorized": "Authorized",
-        "is_external": "Is External",
-        "update_available": "Update Available",
+        "client_version": "Client-Version",
+        "os": "Betriebssystem",
+        "created": "Erstellt am",
+        "authorized": "Autorisiert",
+        "is_external": "Ist extern",
+        "update_available": "Aktualisierung verfügbar",
         "tags": "Tags",
         "last_seen": "Zuletzt gesehen",
         "now": "Jetzt",
@@ -376,8 +393,8 @@
         "minutes": "{{number}}min",
         "seconds": "{{number}}s",
         "ago": "Vor {{value}}",
-        "true": "Yes",
-        "false": "No"
+        "true": "Ja",
+        "false": "Nein"
     },
     "technitium": {
         "totalQueries": "Anfragen",
@@ -472,7 +489,7 @@
         "users": "Benutzer",
         "loginsLast24H": "Anmeldungen (24 h)",
         "failedLoginsLast24H": "Fehlversuche (24 h)",
-        "authorizationsLast24H": "Auths (24h)"
+        "authorizationsLast24H": "Autorisierungen (24h)"
     },
     "proxmox": {
         "mem": "RAM",
@@ -481,7 +498,7 @@
         "vms": "VMs"
     },
     "pulse": {
-        "nodes": "Nodes",
+        "nodes": "Knoten",
         "vms": "VMs",
         "lxcs": "LXCs"
     },
@@ -650,13 +667,13 @@
         "total": "Total"
     },
     "pangolin": {
-        "orgs": "Orgs",
+        "orgs": "Organisationen",
         "sites": "Seiten",
         "resources": "Ressourcen",
         "targets": "Ziele",
         "traffic": "Traffic",
-        "in": "In",
-        "out": "Out"
+        "in": "Eingehend",
+        "out": "Ausgehend"
     },
     "peanut": {
         "battery_charge": "Akkuladung",
@@ -773,7 +790,8 @@
         "queue": "Warteschlange",
         "processing": "Wird verarbeitet",
         "processed": "Wird verarbeitet",
-        "time": "Zeit"
+        "time": "Zeit",
+        "failed": "Failed"
     },
     "firefly": {
         "networth": "Reinvermögen",
@@ -851,6 +869,14 @@
         "books": "Bücher",
         "reading": "Am Lesen",
         "finished": "Fertig"
+    },
+    "bookorbit": {
+        "books": "Bücher",
+        "authors": "Autoren",
+        "series": "Serien",
+        "storage": "Storage",
+        "reading": "Reading",
+        "finished": "Beendet"
     },
     "jdownloader": {
         "downloadCount": "Warteschlange",
@@ -952,32 +978,32 @@
         "storage": "Speicher"
     },
     "maintainerr": {
-        "itemsHandled": "Items Handled",
-        "episodesHandled": "Episodes Handled",
-        "moviesHandled": "Movies Handled",
-        "showsHandled": "Shows Handled",
-        "seasonsHandled": "Seasons Handled",
-        "reclaimable": "Reclaimable",
-        "movieReclaimable": "Movie Reclaimable",
-        "showReclaimable": "Show Reclaimable",
-        "totalCapacity": "Total Capacity"
+        "itemsHandled": "Items bearbeitet",
+        "episodesHandled": "Episoden behandelt",
+        "moviesHandled": "Filme behandelt",
+        "showsHandled": "Serien behandelt",
+        "seasonsHandled": "Staffeln bearbeitet",
+        "reclaimable": "Zurückforderbar",
+        "movieReclaimable": "Film zurückforderbar",
+        "showReclaimable": "Serie zurückforderbar",
+        "totalCapacity": "Gesamte Kapazität"
     },
     "netdata": {
         "warnings": "Warnungen",
         "criticals": "Kritisch"
     },
     "ntfy": {
-        "title": "Title",
-        "priority": "Priority",
-        "lastReceived": "Last Received",
-        "message": "Message",
-        "tags": "Tags",
-        "none": "None",
-        "min": "Min",
-        "low": "Low",
-        "default": "Default",
-        "high": "High",
-        "urgent": "Urgent"
+        "title": "Titel",
+        "priority": "Priorität",
+        "lastReceived": "Zuletzt erhalten",
+        "message": "Nachricht",
+        "tags": "Schlagwörter",
+        "none": "Keine",
+        "min": "Minimal",
+        "low": "Niedrig",
+        "default": "Standard",
+        "high": "Hoch",
+        "urgent": "Dringend"
     },
     "plantit": {
         "events": "Ereignisse",
@@ -1091,8 +1117,8 @@
     "beszel": {
         "name": "Name",
         "systems": "Systeme",
-        "up": "Up",
-        "down": "Down",
+        "up": "Online",
+        "down": "Offline",
         "paused": "Pausiert",
         "pending": "Wartend",
         "status": "Status",
@@ -1242,14 +1268,17 @@
         "steps": "Schritte"
     },
     "syncthing": {
-        "connected": "Connected",
-        "synced": "Synced",
-        "errors": "Errors",
-        "storage": "Storage"
+        "connected": "Verbunden",
+        "synced": "Synchronisiert",
+        "errors": "Fehler",
+        "storage": "Speicher"
     },
     "sportarr": {
         "wanted": "Wanted",
         "queued": "Queued",
         "leagues": "Leagues"
+    },
+    "feed": {
+        "noItems": "No items"
     }
 }

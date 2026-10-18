@@ -39,7 +39,9 @@
         "wait": "Počkejte prosím"
     },
     "search": {
-        "placeholder": "Hledat…"
+        "placeholder": "Hledat…",
+        "provider": "Vyhledávač: {{name}}",
+        "select_provider": "Vyberte vyhledávač"
     },
     "resources": {
         "cpu": "Využití procesoru",
@@ -97,7 +99,12 @@
         "unhealthy": "Nezdravý",
         "not_found": "Nenalezen",
         "exited": "Ukončen",
-        "partial": "Částečný"
+        "partial": "Částečný",
+        "created": "Vytvořeno",
+        "paused": "Pozastaveno",
+        "restarting": "Restartuji",
+        "removing": "Odebírání",
+        "dead": "Mrtvý"
     },
     "ping": {
         "error": "Chyba",
@@ -248,6 +255,16 @@
         "upload": "Nahrávání",
         "leech": "Leechované",
         "seed": "Seedované"
+    },
+    "qui": {
+        "leech": "Leechované",
+        "download": "Stahování",
+        "seed": "Seedované",
+        "upload": "Nahravání",
+        "total": "Celkem",
+        "errored": "Chybné",
+        "ratio": "Poměr",
+        "freeSpace": "Volné"
     },
     "qnap": {
         "cpuUsage": "Využití procesoru",
@@ -773,7 +790,8 @@
         "queue": "Fronta",
         "processing": "Zpracovává se",
         "processed": "Zpracováno",
-        "time": "Čas"
+        "time": "Čas",
+        "failed": "Failed"
     },
     "firefly": {
         "networth": "Čisté jmění",
@@ -851,6 +869,14 @@
         "books": "Knihy",
         "reading": "Čtené",
         "finished": "Přečtené"
+    },
+    "bookorbit": {
+        "books": "Books",
+        "authors": "Authors",
+        "series": "Series",
+        "storage": "Storage",
+        "reading": "Reading",
+        "finished": "Finished"
     },
     "jdownloader": {
         "downloadCount": "Fronta",
@@ -1251,5 +1277,8 @@
         "wanted": "Požadované",
         "queued": "Ve frontě",
         "leagues": "Ligy"
+    },
+    "feed": {
+        "noItems": "Žádné položky"
     }
 }

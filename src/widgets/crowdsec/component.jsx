@@ -1,7 +1,7 @@
-import Block from "components/services/widget/block";
-import Container from "components/services/widget/container";
 import { useTranslation } from "next-i18next/pages";
 
+import Block from "components/services/widget/block";
+import Container from "components/services/widget/container";
 import useWidgetAPI from "utils/proxy/use-widget-api";
 
 const ALERTS_LIMIT = 500;
@@ -21,7 +21,7 @@ export default function Component({ service }) {
     return <Container service={service} error={alertsError ?? bansError} />;
   }
 
-  if (!alerts && !bans) {
+  if (alerts === undefined && bans === undefined) {
     return (
       <Container service={service}>
         <Block label="crowdsec.alerts" />

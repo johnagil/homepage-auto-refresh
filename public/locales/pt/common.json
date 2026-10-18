@@ -39,7 +39,9 @@
         "wait": "Por favor aguarde"
     },
     "search": {
-        "placeholder": "Pesquisar…"
+        "placeholder": "Pesquisar…",
+        "provider": "Motor de Pesquisa: {{name}}",
+        "select_provider": "Seleciona o motor de pesquisa"
     },
     "resources": {
         "cpu": "CPU",
@@ -97,7 +99,12 @@
         "unhealthy": "Não-saudável",
         "not_found": "Não Encontrado",
         "exited": "Saiu",
-        "partial": "Parcial"
+        "partial": "Parcial",
+        "created": "Criado",
+        "paused": "Pausado",
+        "restarting": "A reiniciar",
+        "removing": "A remover",
+        "dead": "Morto"
     },
     "ping": {
         "error": "Erro",
@@ -248,6 +255,16 @@
         "upload": "Envio de Dados",
         "leech": "Fuga",
         "seed": "Semear"
+    },
+    "qui": {
+        "leech": "Fuga",
+        "download": "Transferir",
+        "seed": "Semear",
+        "upload": "Enviar",
+        "total": "Total",
+        "errored": "Erro",
+        "ratio": "Rácio",
+        "freeSpace": "Livre"
     },
     "qnap": {
         "cpuUsage": "Utilização do CPU",
@@ -472,7 +489,7 @@
         "users": "Utilizadores",
         "loginsLast24H": "Inícios de Sessão (24h)",
         "failedLoginsLast24H": "Inícios de Sessão Falhados (24h)",
-        "authorizationsLast24H": "Auths (24h)"
+        "authorizationsLast24H": "Autenticações (24h)"
     },
     "proxmox": {
         "mem": "MEM",
@@ -773,7 +790,8 @@
         "queue": "Fila de espera",
         "processing": "A Processar",
         "processed": "Processado",
-        "time": "Hora"
+        "time": "Hora",
+        "failed": "Failed"
     },
     "firefly": {
         "networth": "Valor Líquido",
@@ -851,6 +869,14 @@
         "books": "Livros",
         "reading": "A ler",
         "finished": "Concluído"
+    },
+    "bookorbit": {
+        "books": "Books",
+        "authors": "Authors",
+        "series": "Series",
+        "storage": "Storage",
+        "reading": "Reading",
+        "finished": "Finished"
     },
     "jdownloader": {
         "downloadCount": "Fila de espera",
@@ -1251,5 +1277,8 @@
         "wanted": "Procurado",
         "queued": "Em fila de espera",
         "leagues": "Ligas"
+    },
+    "feed": {
+        "noItems": "Sem itens"
     }
 }

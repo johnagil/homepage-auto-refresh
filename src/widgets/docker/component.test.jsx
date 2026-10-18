@@ -20,8 +20,8 @@ describe("widgets/docker/component", () => {
 
   it("renders offline status when container is not running", () => {
     useSWR
-      .mockReturnValueOnce({ data: { status: "exited" }, error: undefined }) // status
-      .mockReturnValueOnce({ data: undefined, error: undefined }); // stats
+      .mockReturnValueOnce({ data: { statuses: { c: { status: "exited" } } }, error: undefined })
+      .mockReturnValueOnce({ data: undefined, error: undefined });
 
     renderWithProviders(<Component service={{ widget: { type: "docker", container: "c" } }} />, {
       settings: { hideErrors: false },
@@ -31,31 +31,97 @@ describe("widgets/docker/component", () => {
     expect(screen.getByText("docker.offline")).toBeInTheDocument();
   });
 
+  it("surfaces a docker error payload instead of reporting the container offline", () => {
+    useSWR
+      .mockReturnValueOnce({ data: { error: { message: "socket unreachable" } }, error: undefined })
+      .mockReturnValueOnce({ data: undefined, error: undefined });
+
+    renderWithProviders(<Component service={{ widget: { type: "docker", container: "c", server: "s" } }} />, {
+      settings: { hideErrors: false },
+    });
+
+    expect(screen.queryByText("docker.offline")).not.toBeInTheDocument();
+  });
+
+  it("treats a missing container in the bulk status map as offline", () => {
+    useSWR
+      .mockReturnValueOnce({ data: { statuses: {} }, error: undefined })
+      .mockReturnValueOnce({ data: undefined, error: undefined });
+
+    renderWithProviders(<Component service={{ widget: { type: "docker", container: "c", server: "s" } }} />, {
+      settings: { hideErrors: false },
+    });
+
+    expect(useSWR).toHaveBeenCalledWith("/api/docker/statuses?server=s");
+    expect(screen.getByText("docker.offline")).toBeInTheDocument();
+  });
+
   it("renders cpu/mem/rx/tx values when stats are available", () => {
     useSWR
-      .mockReturnValueOnce({ data: { status: "running" }, error: undefined }) // status
-      .mockReturnValueOnce({
-        data: {
-          stats: {
-            cpu_stats: { cpu_usage: { total_usage: 200 }, system_cpu_usage: 2000, online_cpus: 2 },
-            precpu_stats: { cpu_usage: { total_usage: 100 }, system_cpu_usage: 1000 },
-            memory_stats: { usage: 1000, total_inactive_file: 100 },
-            networks: { eth0: { rx_bytes: 1, tx_bytes: 2 }, eth1: { rx_bytes: 3, tx_bytes: 4 } },
-          },
-        },
-        error: undefined,
-      });
+      .mockReturnValueOnce({ data: { statuses: { c: { status: "running" } } }, error: undefined })
+      .mockReturnValueOnce({ data: { stats: { c: { cpu: 20, mem: 900, rx: 4, tx: 6 } } }, error: undefined });
 
     const { container } = renderWithProviders(<Component service={{ widget: { type: "docker", container: "c" } }} />, {
       settings: { hideErrors: false },
     });
 
-    // cpu: (100/1000)*2*100=20
+    expect(useSWR).toHaveBeenCalledWith("/api/docker/stats?server=");
     expect(container.textContent).toContain("20");
-    // mem used: 1000-100=900
     expect(container.textContent).toContain("900");
-    // rx=4, tx=6
     expect(container.textContent).toContain("4");
     expect(container.textContent).toContain("6");
+  });
+
+  it("omits the mem and network blocks when the api omits those fields", () => {
+    useSWR
+      .mockReturnValueOnce({ data: { statuses: { c: { status: "running" } } }, error: undefined })
+      .mockReturnValueOnce({ data: { stats: { c: { cpu: 20 } } }, error: undefined });
+
+    renderWithProviders(<Component service={{ widget: { type: "docker", container: "c" } }} />, {
+      settings: { hideErrors: false },
+    });
+
+    expect(screen.getByText("docker.cpu")).toBeInTheDocument();
+    expect(screen.queryByText("docker.mem")).not.toBeInTheDocument();
+    expect(screen.queryByText("docker.rx")).not.toBeInTheDocument();
+  });
+
+  it("surfaces a per container stats error rather than reporting it missing", () => {
+    useSWR
+      .mockReturnValueOnce({ data: { statuses: { c: { status: "running" } } }, error: undefined })
+      .mockReturnValueOnce({ data: { stats: { c: { error: "connect ETIMEDOUT" } } }, error: undefined });
+
+    renderWithProviders(<Component service={{ widget: { type: "docker", container: "c", server: "s" } }} />, {
+      settings: { hideErrors: false },
+    });
+
+    expect(screen.getAllByText(/widget.api_error/).length).toBeGreaterThan(0);
+    expect(screen.queryByText("docker.cpu")).not.toBeInTheDocument();
+  });
+
+  it("waits for the status before treating absence from the stats map as an error", () => {
+    useSWR
+      .mockReturnValueOnce({ data: undefined, error: undefined })
+      .mockReturnValueOnce({ data: { stats: {} }, error: undefined });
+
+    renderWithProviders(<Component service={{ widget: { type: "docker", container: "c", server: "s" } }} />, {
+      settings: { hideErrors: false },
+    });
+
+    expect(screen.queryAllByText(/widget.api_error/)).toHaveLength(0);
+    expect(screen.getByText("docker.cpu")).toBeInTheDocument();
+  });
+
+  it("reports an error when a running container is absent from the stats map", () => {
+    useSWR
+      .mockReturnValueOnce({ data: { statuses: { c: { status: "running" } } }, error: undefined })
+      .mockReturnValueOnce({ data: { stats: {} }, error: undefined });
+
+    renderWithProviders(<Component service={{ widget: { type: "docker", container: "c", server: "s" } }} />, {
+      settings: { hideErrors: false },
+    });
+
+    expect(screen.getAllByText(/widget.api_error/).length).toBeGreaterThan(0);
+    expect(screen.queryByText("docker.cpu")).not.toBeInTheDocument();
   });
 });

@@ -39,7 +39,9 @@
         "wait": "請稍後"
     },
     "search": {
-        "placeholder": "搜索緊…"
+        "placeholder": "搜索緊…",
+        "provider": "Search engine: {{name}}",
+        "select_provider": "Select search engine"
     },
     "resources": {
         "cpu": "CPU",
@@ -97,7 +99,12 @@
         "unhealthy": "不健康的",
         "not_found": "未找到",
         "exited": "已退出",
-        "partial": "部分"
+        "partial": "部分",
+        "created": "Created",
+        "paused": "Paused",
+        "restarting": "Restarting",
+        "removing": "Removing",
+        "dead": "Dead"
     },
     "ping": {
         "error": "Error",
@@ -248,6 +255,16 @@
         "upload": "上傳速率",
         "leech": "未完成下載",
         "seed": "已完成下載"
+    },
+    "qui": {
+        "leech": "Leech",
+        "download": "Download",
+        "seed": "Seed",
+        "upload": "Upload",
+        "total": "Total",
+        "errored": "Errored",
+        "ratio": "Ratio",
+        "freeSpace": "Free"
     },
     "qnap": {
         "cpuUsage": "CPU 使用率",
@@ -773,7 +790,8 @@
         "queue": "Queue",
         "processing": "Processing",
         "processed": "Processed",
-        "time": "時間"
+        "time": "時間",
+        "failed": "Failed"
     },
     "firefly": {
         "networth": "淨值",
@@ -849,6 +867,14 @@
     "booklore": {
         "libraries": "Libraries",
         "books": "Books",
+        "reading": "Reading",
+        "finished": "Finished"
+    },
+    "bookorbit": {
+        "books": "Books",
+        "authors": "Authors",
+        "series": "Series",
+        "storage": "Storage",
         "reading": "Reading",
         "finished": "Finished"
     },
@@ -1251,5 +1277,8 @@
         "wanted": "Wanted",
         "queued": "Queued",
         "leagues": "Leagues"
+    },
+    "feed": {
+        "noItems": "No items"
     }
 }

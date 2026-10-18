@@ -35,14 +35,17 @@ vi.mock("widgets/widgets", () => ({
     proxmox: { api: "{url}/api2/json/{endpoint}" },
     truenas: { api: "{url}/api/v2.0/{endpoint}" },
     ntfy: { api: "{url}/{endpoint}" },
+    whatsupdocker: { api: "{url}/{endpoint}" },
     proxmoxbackupserver: { api: "{url}/api2/json/{endpoint}" },
     checkmk: { api: "{url}/{endpoint}" },
     stocks: { api: "{url}/{endpoint}" },
     speedtest: { api: "{url}/{endpoint}" },
+    fileflows: { api: "{url}/{endpoint}" },
     tubearchivist: { api: "{url}/{endpoint}" },
     autobrr: { api: "{url}/{endpoint}" },
     jellystat: { api: "{url}/{endpoint}" },
     trilium: { api: "{url}/{endpoint}" },
+    gitea: { api: "{url}/api/v1/{endpoint}" },
     gitlab: { api: "{url}/{endpoint}" },
     azuredevops: { api: "{url}/{endpoint}" },
     glances: { api: "{url}/{endpoint}" },
@@ -133,6 +136,33 @@ describe("utils/proxy/handlers/credentialed", () => {
     expect(res.body).toEqual({ ok: true });
   });
 
+  it("uses Bearer auth for gitea widgets and keeps the key out of the URL", async () => {
+    getServiceWidget.mockResolvedValue({ type: "gitea", url: "http://example", key: "token" });
+    httpProxy.mockResolvedValue([200, "application/json", []]);
+
+    const req = { method: "GET", query: { group: "g", service: "s", endpoint: "notifications?limit=1", index: 0 } };
+    const res = createMockRes();
+
+    await credentialedProxyHandler(req, res);
+
+    const [url, params] = httpProxy.mock.calls[0];
+    expect(params.headers.Authorization).toBe("Bearer token");
+    expect(url.toString()).toBe("http://example/api/v1/notifications?limit=1");
+  });
+
+  it("passes response headers to the mapping function", async () => {
+    getServiceWidget.mockResolvedValue({ type: "gitea", url: "http://example", key: "token" });
+    httpProxy.mockResolvedValue([200, "application/json", [], { "x-total-count": "7" }]);
+
+    const req = { method: "GET", query: { group: "g", service: "s", endpoint: "notifications?limit=1", index: 0 } };
+    const res = createMockRes();
+
+    await credentialedProxyHandler(req, res, (data, headers) => ({ count: Number(headers["x-total-count"]) }));
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toEqual({ count: 7 });
+  });
+
   it("uses NC-Token auth for nextcloud widgets when key is provided", async () => {
     getServiceWidget.mockResolvedValue({ type: "nextcloud", url: "http://example", key: "nc-token" });
     httpProxy.mockResolvedValue([200, "application/json", { ok: true }]);
@@ -184,6 +214,24 @@ describe("utils/proxy/handlers/credentialed", () => {
 
     const [, params] = httpProxy.mock.calls.at(-1);
     expect(params.headers.Authorization).toBe("Bearer k");
+  });
+
+  it.each([
+    ["Bearer", { key: "token" }, "Bearer token"],
+    ["Basic", { username: "u", password: "p" }, `Basic ${Buffer.from("u:p").toString("base64")}`],
+    ["no", {}, undefined],
+    ["Bearer over Basic", { key: "token", username: "u", password: "p" }, "Bearer token"],
+  ])("uses %s auth for whatsupdocker", async (_mode, credentials, authorization) => {
+    getServiceWidget.mockResolvedValue({ type: "whatsupdocker", url: "http://whatsupdocker", ...credentials });
+    httpProxy.mockResolvedValue([200, "application/json", []]);
+
+    const req = { method: "GET", query: { group: "g", service: "s", endpoint: "api/containers", index: 0 } };
+    const res = createMockRes();
+
+    await credentialedProxyHandler(req, res);
+
+    const [, params] = httpProxy.mock.calls.at(-1);
+    expect(params.headers.Authorization).toBe(authorization);
   });
 
   it("uses Bearer auth for ntfy when key is provided", async () => {
@@ -309,6 +357,7 @@ describe("utils/proxy/handlers/credentialed", () => {
       [{ type: "trilium", url: "http://x", key: "k" }, { Authorization: "k" }],
       [{ type: "gitlab", url: "http://x", key: "k" }, { "PRIVATE-TOKEN": "k" }],
       [{ type: "speedtest", url: "http://x", key: "k" }, { Authorization: "Bearer k" }],
+      [{ type: "fileflows", url: "http://x", key: "k" }, { "X-Webhook-Token": "k" }],
       [
         { type: "azuredevops", url: "http://x", key: "k" },
         { Authorization: `Basic ${Buffer.from("$:k").toString("base64")}` },

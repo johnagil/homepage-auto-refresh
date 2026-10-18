@@ -39,7 +39,9 @@
         "wait": "请稍候"
     },
     "search": {
-        "placeholder": "搜索…"
+        "placeholder": "搜索…",
+        "provider": "Search engine: {{name}}",
+        "select_provider": "Select search engine"
     },
     "resources": {
         "cpu": "CPU",
@@ -97,7 +99,12 @@
         "unhealthy": "不健康",
         "not_found": "未找到",
         "exited": "已退出",
-        "partial": "部分"
+        "partial": "部分",
+        "created": "Created",
+        "paused": "Paused",
+        "restarting": "Restarting",
+        "removing": "Removing",
+        "dead": "Dead"
     },
     "ping": {
         "error": "错误",
@@ -248,6 +255,16 @@
         "upload": "上传速率",
         "leech": "下载中",
         "seed": "做种"
+    },
+    "qui": {
+        "leech": "Leech",
+        "download": "Download",
+        "seed": "Seed",
+        "upload": "Upload",
+        "total": "Total",
+        "errored": "Errored",
+        "ratio": "Ratio",
+        "freeSpace": "Free"
     },
     "qnap": {
         "cpuUsage": "处理器",
@@ -773,7 +790,8 @@
         "queue": "队列",
         "processing": "处理中",
         "processed": "已处理",
-        "time": "时间"
+        "time": "时间",
+        "failed": "Failed"
     },
     "firefly": {
         "networth": "净值",
@@ -851,6 +869,14 @@
         "books": "书籍",
         "reading": "阅读中",
         "finished": "已读完"
+    },
+    "bookorbit": {
+        "books": "Books",
+        "authors": "Authors",
+        "series": "Series",
+        "storage": "Storage",
+        "reading": "Reading",
+        "finished": "Finished"
     },
     "jdownloader": {
         "downloadCount": "队列",
@@ -1251,5 +1277,8 @@
         "wanted": "Wanted",
         "queued": "Queued",
         "leagues": "Leagues"
+    },
+    "feed": {
+        "noItems": "No items"
     }
 }

@@ -103,6 +103,119 @@ describe("utils/config/service-helpers", () => {
     expect(await mod.servicesFromConfig()).toEqual([]);
   });
 
+  it("containersFromConfig returns an empty set when services.yaml is empty", async () => {
+    state.servicesYaml = null;
+
+    const mod = await import("./service-helpers");
+    expect(await mod.containersFromConfig("local")).toEqual(new Set());
+  });
+
+  it("containersFromConfig only returns containers for the requested server", async () => {
+    state.servicesYaml = [
+      { Group: [{ App: { container: "app", server: "local" } }, { Other: { container: "other", server: "remote" } }] },
+    ];
+
+    const mod = await import("./service-helpers");
+    expect(await mod.containersFromConfig("local")).toEqual(new Set(["app"]));
+    expect(await mod.containersFromConfig("remote")).toEqual(new Set(["other"]));
+  });
+
+  it("containersFromConfig maps a service without a server to the default connection", async () => {
+    state.servicesYaml = [{ Group: [{ App: { container: "app" } }] }];
+
+    const mod = await import("./service-helpers");
+    expect(await mod.containersFromConfig("")).toEqual(new Set(["app"]));
+    expect(await mod.containersFromConfig(undefined)).toEqual(new Set(["app"]));
+    expect(await mod.containersFromConfig("local")).toEqual(new Set());
+  });
+
+  it("containersFromConfig recurses into nested groups", async () => {
+    state.servicesYaml = [
+      {
+        Main: [
+          { Child: [{ Deep: { container: "deep", server: "local" } }] },
+          { Root: { container: "top", server: "local" } },
+        ],
+      },
+    ];
+
+    const mod = await import("./service-helpers");
+    expect(await mod.containersFromConfig("local")).toEqual(new Set(["top", "deep"]));
+  });
+
+  it("containersFromConfig includes docker widget containers in both widget and widgets forms", async () => {
+    state.servicesYaml = [
+      {
+        Group: [
+          { WidgetOnly: { widget: { type: "docker", container: "widgetapp", server: "local" } } },
+          {
+            WithArray: {
+              container: "app",
+              server: "local",
+              widgets: [
+                { type: "docker", container: "sidecar", server: "local" },
+                { type: "docker", container: "elsewhere", server: "remote" },
+              ],
+            },
+          },
+        ],
+      },
+    ];
+
+    const mod = await import("./service-helpers");
+    expect(await mod.containersFromConfig("local")).toEqual(new Set(["widgetapp", "app", "sidecar"]));
+  });
+
+  it("containersFromConfig ignores non docker widgets that carry a container field", async () => {
+    state.servicesYaml = [
+      { Group: [{ App: { widget: { type: "portainer", container: "sneaky", server: "local" } } }] },
+    ];
+
+    const mod = await import("./service-helpers");
+    expect(await mod.containersFromConfig("local")).toEqual(new Set());
+  });
+
+  it("homepageLabelValue strips the prefix and honors instance scoping", async () => {
+    const mod = await import("./service-helpers");
+
+    expect(mod.homepageLabelValue("com.docker.compose.project", "foo")).toBeNull();
+    expect(mod.homepageLabelValue("homepage.name", undefined)).toBe("name");
+    expect(mod.homepageLabelValue("homepage.instance.foo.name", "foo")).toBe("name");
+    expect(mod.homepageLabelValue("homepage.instance.bar.name", "foo")).toBeNull();
+    expect(mod.homepageLabelValue("homepage.instance.bar.name", undefined)).toBeNull();
+  });
+
+  it("hasHomepageLabels reports whether a container opts in for this instance", async () => {
+    const mod = await import("./service-helpers");
+
+    expect(mod.hasHomepageLabels(undefined, "foo")).toBe(false);
+    expect(mod.hasHomepageLabels({}, "foo")).toBe(false);
+    expect(mod.hasHomepageLabels({ "com.docker.compose.project": "x" }, "foo")).toBe(false);
+    expect(mod.hasHomepageLabels({ "homepage.name": "X" }, undefined)).toBe(true);
+    expect(mod.hasHomepageLabels({ "homepage.instance.foo.name": "X" }, "foo")).toBe(true);
+    expect(mod.hasHomepageLabels({ "homepage.instance.bar.name": "X" }, "foo")).toBe(false);
+  });
+
+  it("servicesFromDocker skips containers without labels instead of failing the whole server", async () => {
+    state.dockerYaml = { "docker-local": {} };
+    state.dockerContainersByServer["docker-local"] = [
+      { Names: ["/nolabels"] },
+      { Names: ["/labelled"], Labels: { "homepage.group": "G", "homepage.name": "Svc" } },
+    ];
+
+    const mod = await import("./service-helpers");
+    const discovered = await mod.servicesFromDocker();
+
+    expect(discovered).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          name: "G",
+          services: [expect.objectContaining({ name: "Svc", container: "labelled" })],
+        }),
+      ]),
+    );
+  });
+
   it("servicesFromDocker returns [] when docker.yaml is empty", async () => {
     state.dockerYaml = null;
 
@@ -290,6 +403,7 @@ describe("utils/config/service-helpers", () => {
               { type: "radarr", enableQueue: "true" },
               { type: "truenas", enablePools: "true", nasType: "scale" },
               { type: "qnap", volume: "vol1" },
+              { type: "qui", instance: 2 },
               { type: "dispatcharr", enableActiveStreams: "true" },
               { type: "gamedig", gameToken: "t" },
               { type: "kopia", snapshotHost: "h", snapshotPath: "/p" },
@@ -355,6 +469,7 @@ describe("utils/config/service-helpers", () => {
       expect.objectContaining({ namespace: "default", app: "app", podSelector: "app=test" }),
     );
     expect(widgets.find((w) => w.type === "qnap")).toEqual(expect.objectContaining({ volume: "vol1" }));
+    expect(widgets.find((w) => w.type === "qui")).toEqual(expect.objectContaining({ instance: 2 }));
     expect(widgets.find((w) => w.type === "speedtest")).toEqual(
       expect.objectContaining({ bitratePrecision: 3, version: 1 }),
     );
@@ -409,6 +524,38 @@ describe("utils/config/service-helpers", () => {
         color: "purple",
       },
     ]);
+  });
+
+  it("cleanServiceGroups keeps feed layout and drops server-side options", async () => {
+    const mod = await import("./service-helpers");
+    const { cleanServiceGroups } = mod;
+
+    const rawGroups = [
+      {
+        name: "Core",
+        services: [
+          {
+            name: "News",
+            widgets: [
+              {
+                type: "feed",
+                url: "https://example.com/feed.xml?token=secret",
+                maxItems: 3,
+                images: false,
+                layout: "grid",
+              },
+            ],
+          },
+        ],
+        groups: [],
+      },
+    ];
+
+    const feedWidget = cleanServiceGroups(rawGroups)[0].services[0].widgets[0];
+    expect(feedWidget).toEqual(expect.objectContaining({ type: "feed", layout: "grid" }));
+    expect(feedWidget).not.toHaveProperty("url");
+    expect(feedWidget).not.toHaveProperty("maxItems");
+    expect(feedWidget).not.toHaveProperty("images");
   });
 
   it("findGroupByName deep-searches and annotates parent", async () => {

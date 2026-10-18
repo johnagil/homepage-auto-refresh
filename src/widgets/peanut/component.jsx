@@ -1,7 +1,7 @@
-import Block from "components/services/widget/block";
-import Container from "components/services/widget/container";
 import { useTranslation } from "next-i18next/pages";
 
+import Block from "components/services/widget/block";
+import Container from "components/services/widget/container";
 import useWidgetAPI from "utils/proxy/use-widget-api";
 
 export default function Component({ service }) {
@@ -41,17 +41,15 @@ export default function Component({ service }) {
       status = t("peanut.low_battery");
       break;
     default:
-      status = upsStatus;
+      status = typeof upsStatus === "string" && upsStatus ? upsStatus : "-";
   }
+
+  const percent = (value) => (value === undefined || value === null ? "-" : t("common.percent", { value }));
 
   return (
     <Container service={service}>
-      <Block
-        label="peanut.battery_charge"
-        value={t("common.percent", { value: batteryCharge })}
-        highlightValue={batteryCharge}
-      />
-      <Block label="peanut.ups_load" value={t("common.percent", { value: upsLoad })} highlightValue={upsLoad} />
+      <Block label="peanut.battery_charge" value={percent(batteryCharge)} highlightValue={batteryCharge} />
+      <Block label="peanut.ups_load" value={percent(upsLoad)} highlightValue={upsLoad} />
       <Block label="peanut.ups_status" value={status} />
     </Container>
   );

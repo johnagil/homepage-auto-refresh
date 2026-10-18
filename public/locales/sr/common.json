@@ -39,7 +39,9 @@
         "wait": "Молим сачекајте"
     },
     "search": {
-        "placeholder": "Претражи…"
+        "placeholder": "Претражи…",
+        "provider": "Search engine: {{name}}",
+        "select_provider": "Select search engine"
     },
     "resources": {
         "cpu": "Процесор",
@@ -97,7 +99,12 @@
         "unhealthy": "Нездравих",
         "not_found": "Није пронађено",
         "exited": "Напуштених",
-        "partial": "Делимично"
+        "partial": "Делимично",
+        "created": "Created",
+        "paused": "Paused",
+        "restarting": "Restarting",
+        "removing": "Removing",
+        "dead": "Dead"
     },
     "ping": {
         "error": "Грешка",
@@ -248,6 +255,16 @@
         "upload": "Слање",
         "leech": "Leech",
         "seed": "Seed"
+    },
+    "qui": {
+        "leech": "Leech",
+        "download": "Download",
+        "seed": "Seed",
+        "upload": "Upload",
+        "total": "Total",
+        "errored": "Errored",
+        "ratio": "Ratio",
+        "freeSpace": "Free"
     },
     "qnap": {
         "cpuUsage": "Искоришћеност процесора",
@@ -773,7 +790,8 @@
         "queue": "Ред",
         "processing": "Обрада",
         "processed": "Обрада",
-        "time": "Време"
+        "time": "Време",
+        "failed": "Failed"
     },
     "firefly": {
         "networth": "Нето вредност",
@@ -851,6 +869,14 @@
         "books": "Књиге",
         "reading": "Читање",
         "finished": "Завршено"
+    },
+    "bookorbit": {
+        "books": "Books",
+        "authors": "Authors",
+        "series": "Series",
+        "storage": "Storage",
+        "reading": "Reading",
+        "finished": "Finished"
     },
     "jdownloader": {
         "downloadCount": "Ред",
@@ -1251,5 +1277,8 @@
         "wanted": "Wanted",
         "queued": "Queued",
         "leagues": "Leagues"
+    },
+    "feed": {
+        "noItems": "No items"
     }
 }

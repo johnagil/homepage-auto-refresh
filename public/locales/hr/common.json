@@ -21,7 +21,7 @@
         "seconds": "s"
     },
     "auth": {
-        "signout": "Sign out"
+        "signout": "Odjavi se"
     },
     "widget": {
         "missing_type": "Nedostajuća vrsta widgeta: {{type}}",
@@ -39,7 +39,9 @@
         "wait": "Pričekaj"
     },
     "search": {
-        "placeholder": "Traži …"
+        "placeholder": "Traži …",
+        "provider": "Tražilica: {{name}}",
+        "select_provider": "Odaberi tražilicu"
     },
     "resources": {
         "cpu": "CPU",
@@ -97,7 +99,12 @@
         "unhealthy": "Nefunkcionalno",
         "not_found": "Nepronađeno",
         "exited": "Zatoreno",
-        "partial": "Djelomično"
+        "partial": "Djelomično",
+        "created": "Created",
+        "paused": "Paused",
+        "restarting": "Restarting",
+        "removing": "Removing",
+        "dead": "Dead"
     },
     "ping": {
         "error": "Greška",
@@ -133,7 +140,7 @@
         "series": "Serije",
         "episodes": "Epizode",
         "songs": "Pjesme",
-        "albums": "Albums"
+        "albums": "Albumi"
     },
     "esphome": {
         "offline": "Offline",
@@ -248,6 +255,16 @@
         "upload": "Prenesi",
         "leech": "Korištenje tuđeg sadržaja",
         "seed": "Prenošenje preuzetog sadržaja"
+    },
+    "qui": {
+        "leech": "Leech",
+        "download": "Download",
+        "seed": "Seed",
+        "upload": "Upload",
+        "total": "Total",
+        "errored": "Errored",
+        "ratio": "Ratio",
+        "freeSpace": "Free"
     },
     "qnap": {
         "cpuUsage": "Korištenje procesora",
@@ -472,7 +489,7 @@
         "users": "Korisnici",
         "loginsLast24H": "Prijave (24 h)",
         "failedLoginsLast24H": "Neuspjele prijave (24 h)",
-        "authorizationsLast24H": "Auths (24h)"
+        "authorizationsLast24H": "Autorizacije (24h)"
     },
     "proxmox": {
         "mem": "MEM",
@@ -773,7 +790,8 @@
         "queue": "Red čekanja",
         "processing": "Obrada",
         "processed": "Obrađeno",
-        "time": "Vrijeme"
+        "time": "Vrijeme",
+        "failed": "Failed"
     },
     "firefly": {
         "networth": "Neto vrijednost",
@@ -851,6 +869,14 @@
         "books": "Knjige",
         "reading": "Čitanje",
         "finished": "Završeno"
+    },
+    "bookorbit": {
+        "books": "Books",
+        "authors": "Authors",
+        "series": "Series",
+        "storage": "Storage",
+        "reading": "Reading",
+        "finished": "Finished"
     },
     "jdownloader": {
         "downloadCount": "Red čekanja",
@@ -952,15 +978,15 @@
         "storage": "Spremište"
     },
     "maintainerr": {
-        "itemsHandled": "Items Handled",
-        "episodesHandled": "Episodes Handled",
-        "moviesHandled": "Movies Handled",
-        "showsHandled": "Shows Handled",
-        "seasonsHandled": "Seasons Handled",
+        "itemsHandled": "Obrađene stavke",
+        "episodesHandled": "Obrađene epizode",
+        "moviesHandled": "Obrađeni filmovi",
+        "showsHandled": "Obrađene emisije",
+        "seasonsHandled": "Obrađene sezone",
         "reclaimable": "Reclaimable",
         "movieReclaimable": "Movie Reclaimable",
         "showReclaimable": "Show Reclaimable",
-        "totalCapacity": "Total Capacity"
+        "totalCapacity": "Ukupni kapacitet"
     },
     "netdata": {
         "warnings": "Upozorenja",
@@ -1248,8 +1274,11 @@
         "storage": "Spremište"
     },
     "sportarr": {
-        "wanted": "Wanted",
-        "queued": "Queued",
-        "leagues": "Leagues"
+        "wanted": "Željeno",
+        "queued": "U redu čekanja",
+        "leagues": "Lige"
+    },
+    "feed": {
+        "noItems": "No items"
     }
 }

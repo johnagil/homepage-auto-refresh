@@ -21,7 +21,7 @@
         "seconds": "s"
     },
     "auth": {
-        "signout": "Sign out"
+        "signout": "Teken uit"
     },
     "widget": {
         "missing_type": "Ontbrekende legstuk-tipe: {{type}}",
@@ -39,7 +39,9 @@
         "wait": "Wag asseblief"
     },
     "search": {
-        "placeholder": "Soek…"
+        "placeholder": "Soek…",
+        "provider": "Soekenjin: {{name}}",
+        "select_provider": "Kies soekenjin"
     },
     "resources": {
         "cpu": "SVE",
@@ -97,7 +99,12 @@
         "unhealthy": "Ongesond",
         "not_found": "Nie Gevind Nie",
         "exited": "Verlaat",
-        "partial": "Gedeeltelik"
+        "partial": "Gedeeltelik",
+        "created": "Geskep",
+        "paused": "Onderbreek",
+        "restarting": "Herlaai",
+        "removing": "Verwydering",
+        "dead": "Dood"
     },
     "ping": {
         "error": "Fout",
@@ -248,6 +255,16 @@
         "upload": "Laai Op",
         "leech": "Seier",
         "seed": "Vul"
+    },
+    "qui": {
+        "leech": "Leech",
+        "download": "Download",
+        "seed": "Seed",
+        "upload": "Upload",
+        "total": "Total",
+        "errored": "Errored",
+        "ratio": "Ratio",
+        "freeSpace": "Free"
     },
     "qnap": {
         "cpuUsage": "SVE Gebruik",
@@ -472,7 +489,7 @@
         "users": "Gebruikers",
         "loginsLast24H": "Aantekenings (24h)",
         "failedLoginsLast24H": "Mislukte Aantekenings (24h)",
-        "authorizationsLast24H": "Auths (24h)"
+        "authorizationsLast24H": "Magtigings (24h)"
     },
     "proxmox": {
         "mem": "GEH",
@@ -773,7 +790,8 @@
         "queue": "Tou",
         "processing": "Verwerking",
         "processed": "Verwerk",
-        "time": "Tyd"
+        "time": "Tyd",
+        "failed": "Failed"
     },
     "firefly": {
         "networth": "Netto Waarde",
@@ -851,6 +869,14 @@
         "books": "Boeke",
         "reading": "Lees",
         "finished": "Klaar"
+    },
+    "bookorbit": {
+        "books": "Books",
+        "authors": "Authors",
+        "series": "Series",
+        "storage": "Storage",
+        "reading": "Reading",
+        "finished": "Finished"
     },
     "jdownloader": {
         "downloadCount": "Tou",
@@ -1251,5 +1277,8 @@
         "wanted": "Gesoek",
         "queued": "In ry",
         "leagues": "Ligas"
+    },
+    "feed": {
+        "noItems": "No items"
     }
 }

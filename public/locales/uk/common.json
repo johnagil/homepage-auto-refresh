@@ -21,7 +21,7 @@
         "seconds": "с"
     },
     "auth": {
-        "signout": "Sign out"
+        "signout": "Вихід"
     },
     "widget": {
         "missing_type": "Відсутній тип віджета: {{type}}",
@@ -39,7 +39,9 @@
         "wait": "Будь ласка, зачекайте"
     },
     "search": {
-        "placeholder": "Пошук…"
+        "placeholder": "Пошук…",
+        "provider": "Search engine: {{name}}",
+        "select_provider": "Вибрати пошукову систему"
     },
     "resources": {
         "cpu": "ЦП",
@@ -81,7 +83,7 @@
         "nextRun": "Next Run",
         "running": "Running",
         "warnings": "Warnings",
-        "errors": "Errors"
+        "errors": "Помилки"
     },
     "docker": {
         "rx": "RX",
@@ -97,7 +99,12 @@
         "unhealthy": "Нездоровий",
         "not_found": "Не знайдено",
         "exited": "Вийшов",
-        "partial": "Частковий"
+        "partial": "Частковий",
+        "created": "Created",
+        "paused": "Paused",
+        "restarting": "Restarting",
+        "removing": "Removing",
+        "dead": "Dead"
     },
     "ping": {
         "error": "Помилка",
@@ -133,7 +140,7 @@
         "series": "Серіали",
         "episodes": "Серії",
         "songs": "Пiснi",
-        "albums": "Albums"
+        "albums": "Альбоми"
     },
     "esphome": {
         "offline": "Офлайн",
@@ -248,6 +255,16 @@
         "upload": "Вивантаж.",
         "leech": "Ліч",
         "seed": "Сід"
+    },
+    "qui": {
+        "leech": "Leech",
+        "download": "Download",
+        "seed": "Seed",
+        "upload": "Upload",
+        "total": "Total",
+        "errored": "Errored",
+        "ratio": "Ratio",
+        "freeSpace": "Free"
     },
     "qnap": {
         "cpuUsage": "Використання CPU",
@@ -773,7 +790,8 @@
         "queue": "Черга",
         "processing": "Обробка",
         "processed": "Оброблено",
-        "time": "Час"
+        "time": "Час",
+        "failed": "Failed"
     },
     "firefly": {
         "networth": "Чисті Активи",
@@ -851,6 +869,14 @@
         "books": "Книжки",
         "reading": "Читаю",
         "finished": "Завершено"
+    },
+    "bookorbit": {
+        "books": "Книжки",
+        "authors": "Автори",
+        "series": "Серії",
+        "storage": "Storage",
+        "reading": "Reading",
+        "finished": "Finished"
     },
     "jdownloader": {
         "downloadCount": "Черга",
@@ -1250,6 +1276,9 @@
     "sportarr": {
         "wanted": "Wanted",
         "queued": "Queued",
-        "leagues": "Leagues"
+        "leagues": "Ліги"
+    },
+    "feed": {
+        "noItems": "Немає елементів"
     }
 }

@@ -39,7 +39,9 @@
         "wait": "Even geduld"
     },
     "search": {
-        "placeholder": "Zoeken…"
+        "placeholder": "Zoeken…",
+        "provider": "Search engine: {{name}}",
+        "select_provider": "Select search engine"
     },
     "resources": {
         "cpu": "CPU",
@@ -97,7 +99,12 @@
         "unhealthy": "Ongezond",
         "not_found": "Niet Gevonden",
         "exited": "Gestopt",
-        "partial": "Gedeeltelijk"
+        "partial": "Gedeeltelijk",
+        "created": "Created",
+        "paused": "Paused",
+        "restarting": "Restarting",
+        "removing": "Removing",
+        "dead": "Dead"
     },
     "ping": {
         "error": "Fout",
@@ -248,6 +255,16 @@
         "upload": "Upload",
         "leech": "Leech",
         "seed": "Delen"
+    },
+    "qui": {
+        "leech": "Leech",
+        "download": "Download",
+        "seed": "Seed",
+        "upload": "Upload",
+        "total": "Total",
+        "errored": "Errored",
+        "ratio": "Ratio",
+        "freeSpace": "Free"
     },
     "qnap": {
         "cpuUsage": "CPU Verbruik",
@@ -773,7 +790,8 @@
         "queue": "Wachtrij",
         "processing": "Verwerken",
         "processed": "Verwerkt",
-        "time": "Tijd"
+        "time": "Tijd",
+        "failed": "Failed"
     },
     "firefly": {
         "networth": "Totaal eigen vermogen",
@@ -851,6 +869,14 @@
         "books": "Boeken",
         "reading": "Lezen",
         "finished": "Voltooid"
+    },
+    "bookorbit": {
+        "books": "Books",
+        "authors": "Authors",
+        "series": "Series",
+        "storage": "Storage",
+        "reading": "Reading",
+        "finished": "Finished"
     },
     "jdownloader": {
         "downloadCount": "Wachtrij",
@@ -1251,5 +1277,8 @@
         "wanted": "Gewenst",
         "queued": "In de wachtrij",
         "leagues": "Competities"
+    },
+    "feed": {
+        "noItems": "No items"
     }
 }

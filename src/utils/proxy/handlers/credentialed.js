@@ -55,6 +55,7 @@ export default async function credentialedProxyHandler(req, res, map) {
           "authentik",
           "cloudflared",
           "ghostfolio",
+          "gitea",
           "headscale",
           "hoarder",
           "karakeep",
@@ -77,7 +78,7 @@ export default async function credentialedProxyHandler(req, res, map) {
         } else {
           headers.Authorization = basicAuthHeader(widget);
         }
-      } else if (widget.type === "ntfy") {
+      } else if (["ntfy", "whatsupdocker"].includes(widget.type)) {
         if (widget.key) {
           headers.Authorization = `Bearer ${widget.key}`;
         } else if (widget.username && widget.password) {
@@ -130,6 +131,10 @@ export default async function credentialedProxyHandler(req, res, map) {
         headers.Authorization = widget.key;
       } else if (widget.type === "gitlab") {
         headers["PRIVATE-TOKEN"] = widget.key;
+      } else if (widget.type === "fileflows") {
+        if (widget.key) {
+          headers["X-Webhook-Token"] = `${widget.key}`;
+        }
       } else if (widget.type === "speedtest") {
         if (widget.key) {
           // v1 does not require a key
@@ -139,7 +144,7 @@ export default async function credentialedProxyHandler(req, res, map) {
         headers["X-API-Key"] = `${widget.key}`;
       }
 
-      const [status, contentType, data] = await httpProxy(url, {
+      const [status, contentType, data, responseHeaders] = await httpProxy(url, {
         method: req.method,
         withCredentials: true,
         credentials: "include",
@@ -174,7 +179,7 @@ export default async function credentialedProxyHandler(req, res, map) {
             .status(500)
             .json({ error: { message: "Invalid data", url: sanitizeErrorURL(url), data: resultData } });
         }
-        if (map) resultData = map(resultData);
+        if (map) resultData = map(resultData, responseHeaders);
       }
 
       if (contentType) res.setHeader("Content-Type", contentType);

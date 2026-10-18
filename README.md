@@ -81,7 +81,7 @@ docker run --name homepage \
 </p>
 
 <p align="center">
-  A modern, <em>fully static, fast</em>, secure <em>fully proxied</em>, highly customizable application dashboard with integrations for over 100 services and translations into multiple languages. Easily configured via YAML files or through docker label discovery.
+  A modern, <em>fast</em>, secure <em>fully proxied</em>, highly customizable application dashboard with integrations for over 100 services and translations into multiple languages. Easily configured via YAML files or through docker label discovery.
 </p>
 
 <p align="center">
@@ -106,7 +106,7 @@ docker run --name homepage \
 
 With features like quick search, bookmarks, weather support, a wide range of integrations and widgets, an elegant and modern design, and a focus on performance, Homepage is your ideal start to the day and a handy companion throughout it.
 
-- **Fast** - The site is statically generated at build time for instant load times.
+- **Fast** - Cached dashboard data and optimized assets keep page loads quick.
 - **Secure** - All API requests to backend services are proxied, keeping your API keys hidden. Constantly reviewed for security by the community.
 - **For Everyone** - Images built for AMD64, ARM64.
 - **Full i18n** - Support for over 40 languages.

@@ -39,7 +39,9 @@
         "wait": "Пожалуйста, подождите"
     },
     "search": {
-        "placeholder": "Поиск…"
+        "placeholder": "Поиск…",
+        "provider": "Поисковая система: {{name}}",
+        "select_provider": "Выберите поисковую систему"
     },
     "resources": {
         "cpu": "ЦП",
@@ -97,7 +99,12 @@
         "unhealthy": "Нездоровый",
         "not_found": "Не найдено",
         "exited": "Вышел",
-        "partial": "Частичный"
+        "partial": "Частичный",
+        "created": "Создан",
+        "paused": "Приостановлен",
+        "restarting": "Перезапуск",
+        "removing": "Удаление",
+        "dead": "Мёртв"
     },
     "ping": {
         "error": "Ошибка",
@@ -248,6 +255,16 @@
         "upload": "Отдача",
         "leech": "Лич",
         "seed": "Сид"
+    },
+    "qui": {
+        "leech": "Лич",
+        "download": "Скачивание",
+        "seed": "Сид",
+        "upload": "Загрузка",
+        "total": "Всего",
+        "errored": "Ошибок",
+        "ratio": "Соотношение",
+        "freeSpace": "Свободно"
     },
     "qnap": {
         "cpuUsage": "Использование ЦП",
@@ -773,7 +790,8 @@
         "queue": "Очередь",
         "processing": "Обрабатывается",
         "processed": "Обработано",
-        "time": "Время"
+        "time": "Время",
+        "failed": "Неудачно"
     },
     "firefly": {
         "networth": "Общая средства",
@@ -850,6 +868,14 @@
         "libraries": "Библиотеки",
         "books": "Книги",
         "reading": "Читаю",
+        "finished": "Завершено"
+    },
+    "bookorbit": {
+        "books": "Книги",
+        "authors": "Авторы",
+        "series": "Серии",
+        "storage": "Память",
+        "reading": "Чтение",
         "finished": "Завершено"
     },
     "jdownloader": {
@@ -1251,5 +1277,8 @@
         "wanted": "Требуется",
         "queued": "В очереди",
         "leagues": "Лиги"
+    },
+    "feed": {
+        "noItems": "Ничего нет"
     }
 }

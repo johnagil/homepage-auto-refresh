@@ -99,7 +99,12 @@
         "unhealthy": "Unhealthy",
         "not_found": "Not Found",
         "exited": "Exited",
-        "partial": "Partial"
+        "partial": "Partial",
+        "created": "Created",
+        "paused": "Paused",
+        "restarting": "Restarting",
+        "removing": "Removing",
+        "dead": "Dead"
     },
     "ping": {
         "error": "Error",
@@ -250,6 +255,16 @@
         "upload": "Upload",
         "leech": "Leech",
         "seed": "Seed"
+    },
+    "qui": {
+        "leech": "Leech",
+        "download": "Download",
+        "seed": "Seed",
+        "upload": "Upload",
+        "total": "Total",
+        "errored": "Errored",
+        "ratio": "Ratio",
+        "freeSpace": "Free"
     },
     "qnap": {
         "cpuUsage": "CPU Usage",
@@ -775,7 +790,8 @@
         "queue": "Queue",
         "processing": "Processing",
         "processed": "Processed",
-        "time": "Time"
+        "time": "Time",
+        "failed": "Failed"
     },
     "firefly": {
         "networth": "Net Worth",
@@ -851,6 +867,14 @@
     "booklore": {
         "libraries": "Libraries",
         "books": "Books",
+        "reading": "Reading",
+        "finished": "Finished"
+    },
+    "bookorbit": {
+        "books": "Books",
+        "authors": "Authors",
+        "series": "Series",
+        "storage": "Storage",
         "reading": "Reading",
         "finished": "Finished"
     },
@@ -1253,5 +1277,8 @@
         "wanted": "Wanted",
         "queued": "Queued",
         "leagues": "Leagues"
+    },
+    "feed": {
+        "noItems": "No items"
     }
 }

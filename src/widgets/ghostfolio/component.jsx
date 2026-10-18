@@ -1,7 +1,7 @@
-import Block from "components/services/widget/block";
-import Container from "components/services/widget/container";
 import { useTranslation } from "next-i18next/pages";
 
+import Block from "components/services/widget/block";
+import Container from "components/services/widget/container";
 import useWidgetAPI from "utils/proxy/use-widget-api";
 
 function getPerformancePercent(t, performanceRange) {
@@ -55,7 +55,7 @@ export default function Component({ service }) {
       {includeNetWorth && (
         <Block
           label="ghostfolio.net_worth"
-          value={`${performanceToday.performance.currentNetWorth.toFixed(2)} ${userInfo?.settings?.currency ?? ""}`}
+          value={`${performanceToday.performance.currentNetWorth.toFixed(2)} ${userInfo?.settings?.baseCurrency ?? userInfo?.settings?.currency ?? ""}`}
         />
       )}
     </Container>

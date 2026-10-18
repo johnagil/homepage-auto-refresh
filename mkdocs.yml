@@ -44,6 +44,7 @@ nav:
           - widgets/services/backrest.md
           - widgets/services/bazarr.md
           - widgets/services/booklore.md
+          - widgets/services/bookorbit.md
           - widgets/services/beszel.md
           - widgets/services/caddy.md
           - widgets/services/calendar.md
@@ -65,6 +66,7 @@ nav:
           - widgets/services/emby.md
           - widgets/services/esphome.md
           - widgets/services/evcc.md
+          - widgets/services/feed.md
           - widgets/services/filebrowser.md
           - widgets/services/fileflows.md
           - widgets/services/firefly.md
@@ -148,6 +150,7 @@ nav:
           - widgets/services/pyload.md
           - widgets/services/qbittorrent.md
           - widgets/services/qnap.md
+          - widgets/services/qui.md
           - widgets/services/radarr.md
           - widgets/services/readarr.md
           - widgets/services/romm.md
@@ -194,6 +197,7 @@ nav:
           - widgets/services/zabbix.md
       - "Information Widgets":
           - widgets/info/index.md
+          - widgets/info/customapi.md
           - widgets/info/datetime.md
           - widgets/info/glances.md
           - widgets/info/greeting.md

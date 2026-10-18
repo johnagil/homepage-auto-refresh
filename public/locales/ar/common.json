@@ -39,7 +39,9 @@
         "wait": "الرجاء الإنتظار"
     },
     "search": {
-        "placeholder": "بحث …"
+        "placeholder": "بحث …",
+        "provider": "Search engine: {{name}}",
+        "select_provider": "Select search engine"
     },
     "resources": {
         "cpu": "المعالج",
@@ -97,7 +99,12 @@
         "unhealthy": "غير سليم",
         "not_found": "غير موجود",
         "exited": "خرجت",
-        "partial": "جزئي"
+        "partial": "جزئي",
+        "created": "Created",
+        "paused": "Paused",
+        "restarting": "Restarting",
+        "removing": "Removing",
+        "dead": "Dead"
     },
     "ping": {
         "error": "خطأ",
@@ -248,6 +255,16 @@
         "upload": "الرفع",
         "leech": "المُستهلكون",
         "seed": "المُزوِّدين"
+    },
+    "qui": {
+        "leech": "Leech",
+        "download": "Download",
+        "seed": "Seed",
+        "upload": "Upload",
+        "total": "Total",
+        "errored": "Errored",
+        "ratio": "Ratio",
+        "freeSpace": "Free"
     },
     "qnap": {
         "cpuUsage": "استهلاك المعالج",
@@ -773,7 +790,8 @@
         "queue": "الطابور",
         "processing": "قيد المعالجة",
         "processed": "مُعَالَج",
-        "time": "الوقت"
+        "time": "الوقت",
+        "failed": "Failed"
     },
     "firefly": {
         "networth": "صافي القيمة",
@@ -851,6 +869,14 @@
         "books": "الكتب",
         "reading": "أقرأُه",
         "finished": "منتهي"
+    },
+    "bookorbit": {
+        "books": "Books",
+        "authors": "Authors",
+        "series": "Series",
+        "storage": "Storage",
+        "reading": "Reading",
+        "finished": "Finished"
     },
     "jdownloader": {
         "downloadCount": "الطابور",
@@ -1251,5 +1277,8 @@
         "wanted": "Wanted",
         "queued": "Queued",
         "leagues": "Leagues"
+    },
+    "feed": {
+        "noItems": "No items"
     }
 }

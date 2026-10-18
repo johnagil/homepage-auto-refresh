@@ -1,3 +1,4 @@
+import { withAuth } from "utils/auth";
 import getServiceWidget from "utils/config/service-helpers";
 import createLogger from "utils/logger";
 import { formatApiCall } from "utils/proxy/api-helpers";
@@ -41,7 +42,7 @@ function getSafeSegments(rawSegments, allowedSegments) {
   return safeSegments;
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   try {
     const { service, group, index } = req.query;
     const serviceWidget = await getServiceWidget(group, service, index);
@@ -63,6 +64,8 @@ export default async function handler(req, res) {
     if (serviceProxyHandler instanceof Function) {
       // quick return for no endpoint services, calendar is an exception
       if (!req.query.endpoint || serviceProxyHandler === calendarProxyHandler) {
+        req.method = "GET";
+        req.body = undefined;
         return await serviceProxyHandler(req, res);
       }
 
@@ -86,7 +89,7 @@ export default async function handler(req, res) {
         }
 
         req.method = mapping?.method || "GET";
-        if (mapping?.body) req.body = mapping?.body;
+        req.body = mapping?.body;
         req.query.endpoint = endpoint;
 
         if (mapping.segments || req.query.segments) {
@@ -125,6 +128,8 @@ export default async function handler(req, res) {
 
       if (widget.allowedEndpoints instanceof RegExp) {
         if (widget.allowedEndpoints.test(req.query.endpoint)) {
+          req.method = "GET";
+          req.body = undefined;
           return await serviceProxyHandler(req, res);
         }
       }
@@ -140,3 +145,5 @@ export default async function handler(req, res) {
     return res.status(500).send({ error: "Unexpected error" });
   }
 }
+
+export default withAuth(handler);

@@ -3,7 +3,7 @@ title: Settings
 description: Service Configuration
 ---
 
-The `settings.yaml` file allows you to define application level options. For changes made to this file to take effect, you will need to regenerate the static HTML, this can be done by clicking the refresh icon in the bottom right of the page.
+The `settings.yaml` file allows you to define application level options. After making changes, click the refresh icon in the bottom right of the page to clear the cached dashboard data and reload the page.
 
 ## Title
 
@@ -33,7 +33,7 @@ startUrl: https://custom.url
 
 !!! warning "Heads Up!"
 
-    You will need to restart the container any time you add new images, this is a limitation of the Next.js static site server.
+    You will need to restart the container any time you add new local images so the server can discover them.
 
 !!! warning "Heads Up!"
 
@@ -430,6 +430,64 @@ headerStyle: clean
 headerStyle: boxedWidgets
 ```
 
+## Card Style
+
+Service and bookmark cards use a drop shadow by default. The `hairline` style replaces it with a thin border that brightens on hover.
+
+<img width="896" alt="default cards" src="../../assets/style-default.webp">
+
+```yaml
+# default, shadowed cards
+```
+
+---
+
+<img width="896" alt="hairline cards" src="../../assets/card-style-hairline.webp">
+
+```yaml
+cardStyle: hairline
+```
+
+## Block Style
+
+Widget blocks (the value / label pairs inside a service card) can use the `refined` style to make values heavier and easier to read.
+
+<img width="896" alt="default blocks" src="../../assets/style-default.webp">
+
+```yaml
+# default, standard blocks
+```
+
+---
+
+<img width="896" alt="refined blocks" src="../../assets/block-style-refined.webp">
+
+```yaml
+blockStyle: refined
+```
+
+## Font
+
+Homepage uses Manrope by default. You can switch to IBM Plex Mono instead, either everywhere or for data only.
+
+<img width="896" alt="IBM Plex Mono everywhere" src="../../assets/font-plex.webp">
+
+```yaml
+font: plex # the whole dashboard
+```
+
+---
+
+<img width="896" alt="IBM Plex Mono for data only" src="../../assets/font-plex-data.webp">
+
+```yaml
+font: plexData # only values, stats, the clock and status tags
+```
+
+With `plexData`, labels and names stay in Manrope while numbers line up in columns.
+
+Both fonts are bundled with Homepage, so no external requests are made.
+
 ## Base URL
 
 In some proxy configurations, it may be necessary to set the documents base URL. You can do this by providing a `base` value, like so:
@@ -553,6 +611,8 @@ logpath: /logfile/path
 ```
 
 By default, logs are sent both to `stdout` and to a file at the path specified. This can be changed by setting the `LOG_TARGETS` environment variable to one of `both` (default), `stdout` or `file`.
+
+Log files rotate automatically when they reach 10 MiB. Up to five files are retained: the current `homepage.log` and four rotated files (`homepage1.log` through `homepage4.log`). The oldest rotated file is removed when a new one is created.
 
 ## Show Container Stats
 
