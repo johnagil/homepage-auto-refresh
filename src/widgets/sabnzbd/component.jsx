@@ -2,7 +2,9 @@ import { useTranslation } from "next-i18next/pages";
 
 import Block from "components/services/widget/block";
 import Container from "components/services/widget/container";
+import HistoryEntry from "components/widgets/history/historyEntry";
 import useWidgetAPI from "utils/proxy/use-widget-api";
+import QueueEntry from "components/widgets/queue/queueEntry";
 
 function getProgress(sizeLeft, size) {
   return sizeLeft === 0 ? 100 : (1 - sizeLeft / size) * 100;
