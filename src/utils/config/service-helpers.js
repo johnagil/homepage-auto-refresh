@@ -370,6 +370,8 @@ export function cleanServiceGroups(groups) {
           metric,
           pointsLimit,
           diskUnits,
+          chartMin,
+          chartMax,
 
           // glances, customapi, iframe, prometheusmetric
           refreshInterval,
@@ -653,6 +655,8 @@ export function cleanServiceGroups(groups) {
           // if (refreshInterval) cleanedService.widget.refreshInterval = refreshInterval;
           if (pointsLimit) widget.pointsLimit = pointsLimit;
           if (diskUnits) widget.diskUnits = diskUnits;
+          if (chartMin !== undefined) widget.chartMin = chartMin;
+          if (chartMax !== undefined) widget.chartMax = chartMax;
         }
         if (type === "mjpeg") {
           if (stream) widget.stream = stream;
