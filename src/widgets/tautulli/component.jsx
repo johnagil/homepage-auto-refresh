@@ -38,56 +38,92 @@ function generateStreamTitle(session, enableUser, showEpisodeNumber) {
   return enableUser ? `(${friendly_name}) ${stream_title}` : stream_title;
 }
 
+function generatePlayerInfo(session) {
+  const player = session.player || session.product || session.platform || session.device;
+  return [player, session.ip_address].filter(Boolean).join(" · ");
+}
+
+function SessionCard({ progressPercent = 0, top, bottom }) {
+  return (
+    <div className="text-theme-700 dark:text-theme-200 relative mt-1 w-full overflow-hidden rounded-md bg-theme-200/50 dark:bg-theme-900/20">
+      <div
+        className="absolute inset-y-0 left-0 z-0 bg-theme-200 dark:bg-theme-900/40"
+        style={{
+          width: `${progressPercent}%`,
+        }}
+      />
+      <div className="relative z-10 flex h-5 items-center">{top}</div>
+      <div className="relative z-10 flex h-[18px] items-center pl-3">{bottom}</div>
+    </div>
+  );
+}
+
+function PlaceholderSessionCard({ label = "-" }) {
+  return (
+    <SessionCard top={<span className="ml-2 text-xs">{label}</span>} bottom={<span className="ml-2 text-xs">-</span>} />
+  );
+}
+
 function SingleSessionEntry({ session, enableUser, showEpisodeNumber }) {
   const { duration, view_offset, progress_percent, state, video_decision, audio_decision } = session;
 
   const stream_title = generateStreamTitle(session, enableUser, showEpisodeNumber);
+  const player_info = generatePlayerInfo(session);
 
   return (
-    <>
-      <div className="text-theme-700 dark:text-theme-200 relative h-5 w-full rounded-md bg-theme-200/50 dark:bg-theme-900/20 mt-1 flex">
-        <div className="text-xs z-10 self-center ml-2 relative w-full h-4 grow mr-2">
-          <div className="absolute w-full whitespace-nowrap text-ellipsis overflow-hidden" title={stream_title}>
-            {stream_title}
+    <SessionCard
+      progressPercent={progress_percent}
+      top={
+        <>
+          <div className="text-xs z-10 self-center ml-2 relative w-full h-4 grow mr-2">
+            <div className="absolute w-full whitespace-nowrap text-ellipsis overflow-hidden" title={stream_title}>
+              {stream_title}
+            </div>
           </div>
-        </div>
-        <div className="self-center text-xs flex justify-end mr-1.5 pl-1">
-          {video_decision === "direct play" && audio_decision === "direct play" && (
-            <MdSmartDisplay className="opacity-50" />
+          <div className="self-center text-xs flex justify-end mr-1.5 pl-1">
+            {video_decision === "direct play" && audio_decision === "direct play" && (
+              <MdSmartDisplay className="opacity-50" />
+            )}
+            {video_decision === "copy" && audio_decision === "copy" && <MdOutlineSmartDisplay className="opacity-50" />}
+            {video_decision !== "copy" &&
+              video_decision !== "direct play" &&
+              (audio_decision !== "copy" || audio_decision !== "direct play") && (
+                <BsFillCpuFill className="opacity-50" />
+              )}
+            {(video_decision === "copy" || video_decision === "direct play") &&
+              audio_decision !== "copy" &&
+              audio_decision !== "direct play" && <BsCpu className="opacity-50" />}
+          </div>
+        </>
+      }
+      bottom={
+        <>
+          <div className="text-xs z-10 self-center ml-1">
+            {state === "paused" && (
+              <BsPauseFill className="inline-block w-4 h-4 cursor-pointer -mt-[1px] mr-1 opacity-80" />
+            )}
+            {state !== "paused" && (
+              <BsFillPlayFill className="inline-block w-4 h-4 cursor-pointer -mt-[1px] mr-1 opacity-80" />
+            )}
+          </div>
+          {player_info ? (
+            <div
+              className="text-xs z-10 self-center ml-2 mr-2 grow min-w-0 whitespace-nowrap text-ellipsis overflow-hidden opacity-75"
+              title={player_info}
+            >
+              {player_info}
+            </div>
+          ) : (
+            <div className="grow" />
           )}
-          {video_decision === "copy" && audio_decision === "copy" && <MdOutlineSmartDisplay className="opacity-50" />}
-          {video_decision !== "copy" &&
-            video_decision !== "direct play" &&
-            (audio_decision !== "copy" || audio_decision !== "direct play") && <BsFillCpuFill className="opacity-50" />}
-          {(video_decision === "copy" || video_decision === "direct play") &&
-            audio_decision !== "copy" &&
-            audio_decision !== "direct play" && <BsCpu className="opacity-50" />}
-        </div>
-      </div>
-
-      <div className="text-theme-700 dark:text-theme-200 relative h-5 w-full rounded-md bg-theme-200/50 dark:bg-theme-900/20 mt-1 flex">
-        <div
-          className="absolute h-5 rounded-md bg-theme-200 dark:bg-theme-900/40 z-0"
-          style={{
-            width: `${progress_percent}%`,
-          }}
-        />
-        <div className="text-xs z-10 self-center ml-1">
-          {state === "paused" && (
-            <BsPauseFill className="inline-block w-4 h-4 cursor-pointer -mt-[1px] mr-1 opacity-80" />
-          )}
-          {state !== "paused" && (
-            <BsFillPlayFill className="inline-block w-4 h-4 cursor-pointer -mt-[1px] mr-1 opacity-80" />
-          )}
-        </div>
-        <div className="grow " />
-        <div className="self-center text-xs flex justify-end mr-2 z-10">
-          {millisecondsToString(view_offset)}
-          <span className="mx-0.5 text-[8px]">/</span>
-          {millisecondsToString(duration)}
-        </div>
-      </div>
-    </>
+          <div className="self-center text-xs flex justify-end mr-2 z-10">
+            {millisecondsToString(view_offset)}
+            <span className="mx-1">/</span>
+            {millisecondsToString(duration)}
+          </div>
+        </>
+      }
+    />
   );
 }
 
@@ -95,6 +131,8 @@ function SessionEntry({ session, enableUser, showEpisodeNumber }) {
   const { view_offset, progress_percent, state, video_decision, audio_decision } = session;
 
   const stream_title = generateStreamTitle(session, enableUser, showEpisodeNumber);
+  const player_info = generatePlayerInfo(session);
+  const stream_tooltip = player_info ? `${stream_title}\n${player_info}` : stream_title;
 
   return (
     <div className="text-theme-700 dark:text-theme-200 relative h-5 w-full rounded-md bg-theme-200/50 dark:bg-theme-900/20 mt-1 flex">
@@ -113,7 +151,7 @@ function SessionEntry({ session, enableUser, showEpisodeNumber }) {
         )}
       </div>
       <div className="text-xs z-10 self-center ml-2 relative w-full h-4 grow mr-2">
-        <div className="absolute w-full whitespace-nowrap text-ellipsis overflow-hidden" title={stream_title}>
+        <div className="absolute w-full whitespace-nowrap text-ellipsis overflow-hidden" title={stream_tooltip}>
           {stream_title}
         </div>
       </div>
@@ -152,10 +190,9 @@ export default function Component({ service }) {
   if (!activityData) {
     return (
       <div className="flex flex-col pb-1 mx-1">
-        <div className="text-theme-700 dark:text-theme-200 text-xs relative h-5 w-full rounded-md bg-theme-200/50 dark:bg-theme-900/20 mt-1">
-          <span className="absolute left-2 text-xs mt-[2px]">-</span>
-        </div>
-        {expandOneStreamToTwoRows && (
+        {expandOneStreamToTwoRows ? (
+          <PlaceholderSessionCard />
+        ) : (
           <div className="text-theme-700 dark:text-theme-200 text-xs relative h-5 w-full rounded-md bg-theme-200/50 dark:bg-theme-900/20 mt-1">
             <span className="absolute left-2 text-xs mt-[2px]">-</span>
           </div>
@@ -182,23 +219,28 @@ export default function Component({ service }) {
   if (playing.length === 0) {
     return (
       <div className="flex flex-col pb-1 mx-1">
-        <div className="text-theme-700 dark:text-theme-200 text-xs relative h-5 w-full rounded-md bg-theme-200/50 dark:bg-theme-900/20 mt-1">
-          <span className="absolute left-2 text-xs mt-[2px]">{t("tautulli.no_active")}</span>
-        </div>
-        {expandOneStreamToTwoRows && (
+        {expandOneStreamToTwoRows ? (
+          <PlaceholderSessionCard label={t("tautulli.no_active")} />
+        ) : (
           <div className="text-theme-700 dark:text-theme-200 text-xs relative h-5 w-full rounded-md bg-theme-200/50 dark:bg-theme-900/20 mt-1">
-            <span className="absolute left-2 text-xs mt-[2px]">-</span>
+            <span className="absolute left-2 text-xs mt-[2px]">{t("tautulli.no_active")}</span>
           </div>
         )}
       </div>
     );
   }
 
-  if (expandOneStreamToTwoRows && playing.length === 1) {
-    const session = playing[0];
+  if (expandOneStreamToTwoRows) {
     return (
       <div className="flex flex-col pb-1 mx-1">
-        <SingleSessionEntry session={session} enableUser={enableUser} showEpisodeNumber={showEpisodeNumber} />
+        {playing.map((session) => (
+          <SingleSessionEntry
+            key={session.session_key}
+            session={session}
+            enableUser={enableUser}
+            showEpisodeNumber={showEpisodeNumber}
+          />
+        ))}
       </div>
     );
   }
